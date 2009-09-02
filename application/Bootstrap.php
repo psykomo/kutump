@@ -3,10 +3,10 @@ class Bootstrap extends Zend_Application_Bootstrap_Bootstrap
 {
 	protected function _initConfigLegacy()
 	{
-		$config = new Zend_Config_Ini(CONFIG_PATH.'/config.ini', 'general'); 
+		/*$config = new Zend_Config_Ini(CONFIG_PATH.'/config.ini', 'general'); 
 		$registry = Zend_Registry::getInstance(); 
 		$registry->set('config', $config); 
-		$registry->set('files', $_FILES);
+		$registry->set('files', $_FILES);*/
 	}
 	protected function _initAppModelsAutoload()
 	{
