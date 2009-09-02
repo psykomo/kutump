@@ -1,0 +1,17 @@
+Dear <?php echo $this->username;?>,
+
+This is a notice that an invoice has been generated on <?php echo $this->datePurchased;?>.
+
+Your payment method is: <?php echo $this->paymentMethod;?>
+
+Invoice # <?php echo $this->invoiceNumber;?>
+Amount Due: USD <?php echo $this->orderTotal;?>
+Due Date: -
+
+You can login to your client area to view and pay the invoice at <?php echo KUTU_ROOT_URL;?>/site/store/viewinvoice/orderId/<?php echo $this->orderId;?>.
+
+Best Regards,
+
+LGS ONLINE
+
+==============================

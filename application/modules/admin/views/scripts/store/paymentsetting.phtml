@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="<?echo KUTU_ROOT_URL;?>/lib/jquery/pagination.css" />
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jquery/jquery.pagination.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		//$('#menu').flickrmenu();
+        $('ul.sf-menu').superfish();
+    
+    var isFirstTime = 1;
+	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 0;
+	var itemsPerPage = <?echo $this->itemsPerPage;?>;
+	var currentOffset = <?echo $this->offset;?>;
+	var limit = <?echo $this->limit;?>;
+	var currentNode = "<?echo $this->currentNode;?>";
+	var totalItems = <?echo $this->totalItems;?>;
+	var sort = "<?echo $this->sort;?>";
+	
+	
+	var tmpCurrentPageIndex = currentOffset/itemsPerPage;
+	
+	$("#catalogPagination").pagination(totalItems, 
+	{items_per_page:itemsPerPage, callback:handlePaginationClick, current_page:tmpCurrentPageIndex}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		if(!isFirstTime)
+		{
+			myPageIndex = new_page_index;
+			var nextOffset = (itemsPerPage * myPageIndex);
+		
+			$("Offset").val(nextOffset);
+			//$("#frmSearch").submit();
+			
+			var url = "<?echo KUTU_ROOT_URL;?>/admin/store/index/"+currentNode+"/offset/"+nextOffset+"/limit/"+limit+"/sort/"+sort+"/";
+			window.location = url;
+		}
+		isFirstTime = 0;
+		return false;
+	}
+
+	});
+    
+</script>
+<?=$this->render('header.phtml');?>
+<hr class="space">
+<strong>
+<div class="span-1">No</div>
+<div class="span-4">ID</div>
+<div class="span-6">Value</div>
+<div class="span-9">Note</div>
+<div class="span-4 last">Action</div>
+</strong>
+<hr class="space"/>
+<? $i=1; foreach($this->rows as $row): ?>
+
+<div class="span-1" align="right"><?=$i?></div>
+<div class="span-4"><strong><?=$row->settingKey;?></strong>&nbsp;</div>
+<div class="span-6"><?=$row->settingValue;?>&nbsp;</div>
+<div class="span-9">
+<?=htmlentities($row->note);?>&nbsp;
+</div>
+<div class="span-4 last"><a href="<? echo $this->url(array('controller'=>'store', 
+	'action'=>'editPaymentSetting', 'id'=>$row->settingId));?>">edit</a></div>
+<hr class="">
+<? $i++; endforeach;?>
+
+<table width='100%'>
+	<tr>
+		<td width=35%>&nbsp;</td>
+		<td align=right><div id='catalogPagination' class="pagination"></div></td>
+	</tr>
+</table>

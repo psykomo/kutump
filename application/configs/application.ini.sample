@@ -1,0 +1,186 @@
+[production]
+guid.prefix = lgs
+helper.login.page = /helper/sso/login
+
+store.isClosed = 0
+store.paymentmethods.paypal = 1
+store.paymentmethods.postpaid = 1
+store.paymentmethods.bank = 1
+store.paymentmethods.ccnsiapay = 1
+
+phpSettings.display_startup_errors = 0
+phpSettings.display_errors = 0
+includePaths.library = APPLICATION_PATH "/../lib"
+bootstrap.path = APPLICATION_PATH "/Bootstrap.php"
+bootstrap.class = "Bootstrap"
+pluginPaths.Kutu_Application_Resource = "Kutu/Application/Resource" 
+
+;autoloadernamespaces
+	autoloadernamespaces.0 = "Kutu_"
+	autoloadernamespaces.1 = "Zend_"
+	autoloadernamespaces.2 = "Misc_"
+	autoloadernamespaces.3 = "PaymentGateway_"
+
+;resources.frontController
+	resources.frontController.moduleDirectory = MODULE_PATH
+	resources.frontController.moduleControllerDirectoryName = "controllers"
+	;resources.frontController.plugins.moduleswitcher = "Kutu_Controller_Plugin_ModuleSwitcher"
+	resources.frontController.env = APPLICATION_ENV
+	resources.frontController.throwerrors = false
+	resources.frontController.defaultModule = "default"
+	resources.frontController.defaultAction = "index"
+	resources.frontController.defaultControllerName = "index"
+	
+; RESOURCE VIEW
+	resources.view.helperPath.App_View_Helper = APPLICATION_PATH "/views/helpers"
+
+;resources.database
+	resources.db.adapter = "PDO_MYSQL"
+	resources.db.params.host = "localhost"
+	resources.db.params.username = "root"
+	resources.db.params.password = "root"
+	resources.db.params.dbname = "kutump-lgs"
+	resources.db.isDefaultTableAdapter = true
+
+
+;ROUTER
+; about router: http://www.nabble.com/Adding-routes-with-application.ini-td23293676.html#a23293676
+	
+	;routes.login.type = "Zend_Controller_Route_Router_Static" 
+	resources.router.routes.login.route = "identity/login"
+	resources.router.routes.login.defaults.module = identity
+    resources.router.routes.login.defaults.controller = index
+    resources.router.routes.login.defaults.action = login
+    ;resources.router.routes.lab.defaults.id = 1
+    ;resources.router.routes.lab.reqs.id = "\d+"
+
+	resources.router.routes.logout.route = "identity/logout"
+	resources.router.routes.logout.defaults.module = identity
+    resources.router.routes.logout.defaults.controller = index
+    resources.router.routes.logout.defaults.action = logout
+
+	
+	;resources.router.routes.dms.type = "Zend_Controller_Router_Route" 
+	resources.router.routes.dms.route = "dms/:node/*"
+	resources.router.routes.dms.defaults.module = site
+    resources.router.routes.dms.defaults.controller = dms
+    resources.router.routes.dms.defaults.action = index
+	
+	;resources.router.routes.dms1.type = "Zend_Controller_Router_Route" 
+	resources.router.routes.dms1.route = "dms/catalog/:guid/*"
+	resources.router.routes.dms1.defaults.module = site
+    resources.router.routes.dms1.defaults.controller = dms
+    resources.router.routes.dms1.defaults.action = details
+
+	
+	;resources.router.routes.dms2.type = "Zend_Controller_Router_Route_Static" 
+	resources.router.routes.dms2.route = "dms"
+	resources.router.routes.dms2.defaults.module = site
+    resources.router.routes.dms2.defaults.controller = dms
+    resources.router.routes.dms2.defaults.action = index
+
+	resources.router.routes.download.route = "download/:guid/*"
+	resources.router.routes.download.defaults.module = site
+    resources.router.routes.download.defaults.controller = download
+    resources.router.routes.download.defaults.action = index
+
+	resources.router.routes.bb.route = "bb/:action/*"
+	resources.router.routes.bb.defaults.module = site
+    resources.router.routes.bb.defaults.controller = bb
+
+	resources.router.routes.pages.route = "pages/*"
+	resources.router.routes.pages.defaults.module = site
+    resources.router.routes.pages.defaults.controller = pages
+    resources.router.routes.pages.defaults.action = index
+
+	
+;DB TABLE CACHE
+	resources.dbcache.enable = 1
+	
+; KUTU SESSION
+	resources.session.adapter = directdb
+	resources.session.db.adapter = PDO_MYSQL
+	resources.session.db.params.host = localhost
+	resources.session.db.params.username = root
+	resources.session.db.params.password = root
+	resources.session.db.params.dbname = kutump-lgs
+	
+; KUTU ACL
+	resources.acl.adapter = "phpgacl"
+	resources.acl.db.adapter = "PDO_MYSQL"
+	resources.acl.db.params.host = "localhost"
+	resources.acl.db.params.username = "root"
+	resources.acl.db.params.password = "root"
+	resources.acl.db.params.dbname = "kutump-lgs"
+
+; KUTU IDENTITY
+	;resources.identity.adapter = remote
+	resources.identity.url.login = KUTU_ROOT_URL"/identity/login"
+	resources.identity.url.logout = KUTU_ROOT_URL"/identity/logout"
+	resources.identity.rememberme.duration = 86000
+	resources.identity.rememberme.enable = 1
+	resources.identity.auth.adapter = direct
+	resources.identity.auth.db.adapter = PDO_MYSQL
+	resources.identity.auth.db.params.host = localhost
+	resources.identity.auth.db.params.username = root
+	resources.identity.auth.db.params.password = root
+	resources.identity.auth.db.params.dbname = kutump-lgs
+	
+; KUTU INDEXING
+	resources.indexing.adapter = solr
+	resources.indexing.solr.read.host =
+	resources.indexing.solr.read.port =
+	resources.indexing.solr.read.dir =
+	resources.indexing.solr.write.host = localhost
+	resources.indexing.solr.write.port = 8983
+	resources.indexing.solr.write.dir = /solr/core0
+	
+	;resources.indexing.adapter = zendlucene
+	;resources.indexing.zendlucene.host = localhost
+	;resources.indexing.zendlucene.port = 80
+	;resources.indexing.zendlucene.dir = /data/lucene_indexes
+	
+	resources.indexing.extractor.pdf = /opt/local/bin/pdftotext
+	resources.indexing.extractor.word = /opt/local/bin/antiword
+	
+	;resources.jcart1.message = "global" 
+
+; LAYOUT	 
+	resources.layout.layout = "layout"
+	
+
+;see this http://blog.vandenbos.org/2009/07/07/zend-framework-module-config/
+;resources.modulesetup[] =
+
+; have to add this resource.modules[] = so bootstrap module can be executed
+resources.modules[] = 
+
+; Module Resource
+	site.resources.jcart1.message = "ini site"
+	admin.resources.jcart1.message = "hi ini aku"
+	
+
+[staging : production]
+
+[testing : production]
+phpSettings.display_startup_errors = 1
+phpSettings.display_errors = 1
+
+[development : production]
+phpSettings.display_startup_errors = 1
+phpSettings.display_errors = 1
+
+[nlrp : development]
+resources.db.adapter = "PDO_MYSQL"
+resources.db.params.host = "localhost"
+resources.db.params.username = "root"
+resources.db.params.password = "root"
+resources.db.params.dbname = "kutump-nlrp"
+resources.db.isDefaultTableAdapter = true
+
+resources.router.routes.pages.route = "pages/*"
+resources.router.routes.pages.defaults.module = sitenlrp
+resources.router.routes.pages.defaults.controller = pages
+resources.router.routes.pages.defaults.action = index
+
+;resources.modules = 

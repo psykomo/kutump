@@ -1,0 +1,214 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#username").ajaxSend(function(evt, request, settings){
+	   //$(this).append("<li>Starting request at " + settings.url + "</li>");
+		//alert("sending data..");
+	 });
+	
+	$("#frmSignup").validate({
+		rules: {
+			firstname: "required",
+			username: {
+				required: true,
+				minlength: 2,
+				remote: "<?php echo KUTU_ROOT_URL;?>/api/user/isusernameavailable/"
+			},
+			password: {
+				required: true,
+				minlength: 5
+			},
+			passwordConfirm: {
+				required: true,
+				minlength: 5,
+				equalTo: "#password"
+			},
+			email: {
+				required: true,
+				email: true
+				//remote: "emails.php"
+			},
+			dateformat: "required",
+			terms: "required"
+		},
+		messages: {
+			firstname: "Enter your Firstname",
+			username: {
+				required: "Enter a username",
+				minlength: jQuery.format("Enter at least {0} characters"),
+				remote: jQuery.format("{0} is already in use")
+			},
+			password: {
+				required: "Provide a password",
+				rangelength: jQuery.format("Enter at least {0} characters")
+			},
+			passwordConfirm: {
+				required: "Repeat your password",
+				minlength: jQuery.format("Enter at least {0} characters"),
+				equalTo: "Enter the same password as above"
+			},
+			email: {
+				required: "Please enter a valid email address",
+				minlength: "Please enter a valid email address",
+				remote: jQuery.format("{0} is already in use")
+			},
+			dateformat: "Choose your preferred dateformat",
+			terms: " "
+		}
+		
+		
+	});
+});
+</script>
+<hr>
+<div container>
+	<div class="span-33 append-2 prepend-2 last">
+		<h2 class="alt">Sign Up</h2>
+	</div>
+</div>
+<hr>
+<div class="span-33 append-2 prepend-2">
+	<form id="frmSignup" action="" method="post">
+
+	      	<fieldset>
+
+	      		<legend>Member Info | * denotes required fields</legend>
+
+	      		<p><label for="email">* Your Primary Email</label><br>
+	      		  <input type="text" class="text required email" name="email" id="email" value=""></p>
+				<p>
+					<label for="username">* Username</label><br>
+					<input type='text' id="username" name="username" class="text required" minlength="2" />
+				</p>
+				<p>
+					<label for="password">* Password</label><br>
+					<input id="password" name="password" type="password" class="text required" maxlength="50" value="" />
+				</p>
+				<p>
+					<label for="passwordConfirm">* Confirm Password</label><br>
+					<input id="passwordConfirm" name="passwordConfirm" type="password" class=" text required" maxlength="50" value="" />
+				</p>
+				<p>
+					<label for="firstname">* Firstname</label><br>
+					<input id="firstname" name="firstname" class="text required" minlength="2" />
+				</p>
+				<p>
+					<label for="lastname">Lastname</label><br>
+					<input id="lastname" name="lastname" class="text" minlength="2" />
+				</p>
+				<p>
+					<label for="company">Company</label><br>
+					<input id="company" name="company" class="text"  />
+				</p>
+				<p>
+					<label for="countryId">* Country</label><br>
+					<?php echo $this->formSelectCountries('countryId', 'ID');?>
+					
+				</p>
+				<p>
+					<label for="jobId">* Primary Role</label><br>
+					<select name="jobId" id="jobId" class="required" size="1">
+					<option value="">Please select</option>
+					<option value="">----- Technology Related -----</option>
+					<option value="RESELLER">Computer Product Reseller (VAR, Retailer)</option>
+					<option value="DBADMIN">Database Administration</option>
+					<option value="PROJMAN">Development Project Management</option>
+					<option value="EBUSADMIN">eBusiness Administration</option>
+					<option value="ISITEXEC">Executive IS/IT Management (CIO, CTO)</option>
+
+					<option value="ITCONS">IT Consultant</option>
+					<option value="ITDEPTMGR">IT Department Manager</option>
+					<option value="ENGINEER">Hardware Design / Engineering</option>
+					<option value="LANADMIN">Networking / LAN Administration</option>
+					<option value="SOFTDEV">Software / Applications Development</option>
+					<option value="SYSDEV">Systems Programmer / Development</option>
+					<option value="TELADMIN">Telecommunications System Administration</option>
+					<option value="TECHSUPP">Technical/PC Support</option>
+					<option value="WEBDEV">Web / Multimedia Developer</option>
+
+					<option value="OTHERISIT">Other IS/IT or Technology Function</option>
+					<option value="">----- non-Technology Related -----</option>
+					<option value="ACCTNG">Accounting / Finance</option>
+					<option value="SNRMGR">Senior Manager (SVP, VP, GM)</option>
+					<option value="DEPTHEAD">Department Head / Director</option>
+					<option value="EDU">Education</option>
+					<option value="EXECMGR">Executive Manager (Chairman, CEO, CFO)</option>
+					<option value="GRART">Graphic Design / Artist</option>
+					<option value="HR">HR / Personnel / Training</option>
+
+					<option value="CONSNONISIT">Non-Computer Consultant</option>
+					<option value="LGLMED">Professional (Legal, Medical)</option>
+					<option value="RSRCH">Research / Development / Scientific</option>
+					<option value="SALES">Sales / Marketing / Business Development</option>
+					<option value="OTHERNONISIT">Other</option>
+					<option value="">----- Presently Not Employed -----</option>
+					<option value="UNEMPLOYED">Unemployed</option>
+					<option value="STUDENT">Student</option>
+					<option value="RETIRED">Retired</option>
+
+					<option value="OTHERNOTEMP">Other</option>
+					</select>
+					
+				</p>
+				<p>
+					<label>Company Size</label><br>
+					<select name="companySizeId" id="companySizeId" class="" size="1">
+					<option value="">Please select</option>
+					<option value="1">1</option>
+					<option value="2-9">2-9</option>
+
+					<option value="10-49">10-49</option>
+					<option value="50-99">50-99</option>
+					<option value="100-499">100-499</option>
+					<option value="500-999">500-999</option>
+					<option value="1,000-9,999">1,000-9,999</option>
+					<option value="10,000+">10,000 or more</option>
+					<option value="UNKNOWN">Don't know</option>
+					</select>
+					
+				</p>
+				<p>
+					<label>* Industry</label><br>
+					<select name="industryId" id="industryId" class="required" size="1">
+					<option value="">Please select</option>
+					<option value="TRAVEL">Aerospace/Travel</option>
+					<option value="ASP">Application Service Provider</option>
+					<option value="FINSERV">Banking/Accounting/Financial Services</option>
+					<option value="CONSCMP">Business Services/Consulting (Tech-Related)</option>
+
+					<option value="CONSOTH">Business Services/Consulting (Non Tech-Related)</option>
+					<option value="COMM">Communications (Local/Long Distance/Independent/Cable)</option>
+					<option value="EDU">Education</option>
+					<option value="ENG">Engineering/Architecture/Construction</option>
+					<option value="GOV">Government - Local/State/Federal</option>
+					<option value="GDSGN">Graphic Design</option>
+					<option value="HEALTH">Health Care</option>
+					<option value="INS">Insurance/Real Estate/Legal</option>
+					<option value="MNFCMP">Manufacturer (Tech-Related)</option>
+
+					<option value="MNFOTH">Manufacturer (Non Tech-Related)</option>
+					<option value="MEDIA">Media/Entertainment/Publishing/Advertising/PR</option>
+					<option value="RND">Research and Development</option>
+					<option value="RTLCMP">Retailer/Distributor/Wholesaler (Tech-Related)</option>
+					<option value="RTLOTH">Retailer/Distributor/Wholesaler (Non Tech-Related)</option>
+					<option value="ISP">Service Provider (Web Hosting, Data, Wireless, Online)</option>
+					<option value="DEVSOFT">Software Development</option>
+					<option value="TRANSUTIL">Transportation/Utilities</option>
+					<option value="VARVADSI">VAR/VAD/System Integrator</option>
+
+					<option value="DEVWEB">Web Development</option>
+					<option value="OTHER">Other</option>
+					</select>
+					
+				</p>
+				<hr class="space">
+				<p>
+					When you register to access this service, you become a member of LGS Online. As a member, you may receive a complimentary subscription to the LGS Online member newsletter and e-mail updates of important LGS Online enhancements and news. You can unsubscribe from these e-mail services at any time.  By using this service, you indicate that you agree to our <b> <a href="#"> Terms and Conditions </a> </b>and have read and understand our <a href="#"> <b> Privacy Policy.</a></b>
+				</p>
+				<br>
+	      		<p><input type="submit" value="Submit">
+	      		  <input type="reset" value="Reset"></p>
+
+	      	</fieldset>
+	      </form>
+</div>
+<br>&nbsp;

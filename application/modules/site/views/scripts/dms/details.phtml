@@ -1,0 +1,60 @@
+<? 
+	// INITIALIZE JCART AFTER SESSION START
+	$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
+	// INCLUDE CONFIG SO THIS SCRIPT HAS ACCESS USER FIELD NAMES
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-config.php');
+	// INCLUDE DEFAULT VALUES SINCE WE NEED TO PASS THE VALUE OF THE UPDATE BUTTON BACK TO jcart.php IF UPDATING AN ITEM QTY
+	// IF NO VALUE IS SET IN CONFIG, THERE HAS TO BE A DEFAULT VALUE SINCE SIMPLY CHECKING FOR THE VAR ITSELF FAILS
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-defaults.php');
+?>
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jcart/jcart-javascript.php"></script>
+<?=$this->render("slidemenu.phtml")?>
+<br>
+
+<div class="span-23 prepend-2 colborder">
+	<?echo $this->action('breadcrumbs','dms_component','site',array('node'=>$this->currentNode));?>
+	<h2 class="alt"><?echo $this->catalogTitle;?></h2>
+	<hr>
+	<h3><span class="alt"><?echo $this->catalogSubTitle;?></span> </h3>
+	<p><?//echo $this->widget1->render();?></p>
+	<h4>PRICE: <?echo $this->bpm->getPrice($this->catalogGuid);?></h4>
+	<form method="post" action="" class="jcart">
+		
+			<div style="display:none">
+			<input type="hidden" name="my_item_id" value="<?echo $this->catalogGuid;?>" />
+			<input type="hidden" name="my_item_name" value="<?echo $this->catalogTitle;?>" />
+			<input type="hidden" name="my_item_price" value="<?echo $this->bpm->getPrice($this->catalogGuid);?>" />
+			<input type="text" name="my_item_qty" value="1" size="3" />
+			</div>
+			<?php
+				$auth =  Zend_Auth::getInstance();
+				$bpm = new Kutu_Core_Bpm_Catalog();
+				$hasBought = $bpm->isBoughtByUser($this->catalogGuid, $auth->getIdentity()->guid);
+				if(!$hasBought){
+			?>
+					<input type="submit" name="my_add_button" value="add to cart" class="button" />
+			<?php } else {?>
+					<p class="success">You have already bought this item. You may download the attached files and view all details.</p>
+			<?php }?>
+					
+		
+	</form>
+	<br>
+	<?echo $this->action('relationbox','dms_component','site',array('g'=>$this->catalogGuid));?>
+	<br>&nbsp;
+</div>
+<div class="span-10 append-1 last">
+	<h3>My <span class="alt">Cart</span> </h3>
+	<div id="sidebar">
+		<?php $cart->display_cart($jcart);?>
+	</div>
+	<hr class="space">
+	<h3>Most <span class="alt">Downloaded</span> </h3>
+	<p>Here is the list of the most downloaded documents</p>
+	<hr class="space">
+	<h3>Did <span class="alt">You know?</span> </h3>
+	<p>Facts just about anything...</p>
+	<hr class="space">
+	<h3>Your <span class="alt">Documents</span> </h3>
+	<p>Here is the list of the documents you have bought before.</p>
+</div>

@@ -1,0 +1,65 @@
+<div class="container" style="background: #fff;">
+	<div class="span-25 prepend-1 append-1">
+		<div class="box">
+			<?echo $this->action('breadcrumbs','pages_component','site',array('node'=>$this->currentNode));?>
+			<h2 class="alt"><?echo $this->listTitle;?></h2>
+			<hr>
+			<?
+				if($this->showHeadline)
+				{
+
+			?>
+					<h3><?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedTitle')?></h3>
+					<h3><?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedSubTitle')?></h3>
+					<h4 class="alt"><?echo $this->row->modifiedDate?></h4>
+					<?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedContent')?>
+					<a href="<?echo KUTU_ROOT_URL;?>/pages/g/<?echo $this->currentNode;?>/heading/0">View All Articles in <?echo $this->listTitle;?></a>
+					<br>&nbsp;
+					<?
+						if($this->showHeadline)
+							echo $this->action('document','pages_component','site',array("g"=>$this->catalogGuid));
+					?>
+			<? }?>
+			<?
+				if(!$this->showHeadline)
+				{
+			?>
+
+			<h3 class="alt">Number of Articles: <?php echo $this->hits->response->numFound;?> Record(s)</h3>
+			<hr class="space">
+			<form id="frmCatalogs" name="frmCatalogs">
+			<?php foreach ($this->hits->response->docs as $hit) { ?>
+				<div class='span-2'><IMG src='<?php echo KUTU_ROOT_URL.'/common/images/fb/note.png' ?>' width=24 height=24 border=0 align=absmiddle /></div>
+				<div class='span-20 last'>
+					<p>
+						<?php if($hit->profile == 'kutu_doc'){?>
+							<a href="<?php echo KUTU_ROOT_URL;?>/browser/downloadfile/guid/<?php echo $hit->id;?>"><div class="searchResultTitle">File: <?php try {echo $hit->title;} catch (Exception $e) {echo '';}?></div></a>
+						<?php } else { ?>
+								<a href="<? echo KUTU_ROOT_URL;?>/pages/g/<?php echo $hit->id;?>/node/<?echo $this->currentNode;?>"><?php try {echo $hit->title;} catch (Exception $e) {echo 'No-Title';}?></a>
+						<?php }?>
+						<?php try {echo (@$hit->subTitle)?'<br>'.@$hit->subTitle:'';} catch (Exception $e) {echo '';}?>
+						<br>
+						Last modified on: <?php try {echo @$hit->modifiedDate;} catch (Exception $e) {echo '';}?>
+					</p>
+				</div>
+				<hr class="dashed">
+			<?php }; ?>
+			</form>
+			<div class="span-20 last">
+				<?php echo $this->paginationControl($this->paginator,
+				                                    'Sliding',
+				                                    'paginator.phtml'); ?>
+			</div>
+			<br>&nbsp;
+			<?php } ?>
+		</div>
+	</div>
+	<div class="span-10 last">
+		<div class="boxRightSideBar" style="background: #fff;">
+			<?//echo $this->widget1->render();?>
+			<?=$this->render('lgsolrightmenu.phtml')?>
+		</div>
+	</div>
+</div>
+
+

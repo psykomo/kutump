@@ -2,11 +2,10 @@
 /uploads
 /lib/Zend*
 /documentation/dev
-
-/view-resources
-/data
-/application/config/*.ini
-/application/tmp
-/solr-kutump
 baseinit.php
+*.ini
+/application/tmp
+/data
+/solr-kutump
 *.log
+.htaccess

@@ -1,0 +1,142 @@
+<? 
+	// INITIALIZE JCART AFTER SESSION START
+	$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
+	// INCLUDE CONFIG SO THIS SCRIPT HAS ACCESS USER FIELD NAMES
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-config.php');
+	// INCLUDE DEFAULT VALUES SINCE WE NEED TO PASS THE VALUE OF THE UPDATE BUTTON BACK TO jcart.php IF UPDATING AN ITEM QTY
+	// IF NO VALUE IS SET IN CONFIG, THERE HAS TO BE A DEFAULT VALUE SINCE SIMPLY CHECKING FOR THE VAR ITSELF FAILS
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-defaults.php');
+?>
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jcart/jcart-javascript.php"></script>
+<?=$this->render("slidemenu.phtml")?>
+<br>
+<div class="span-23 prepend-2 colborder">
+	<?echo $this->action('breadcrumbs','dms_component','site',array('node'=>$this->currentNode));?>
+	<h2 class="alt"><?=$this->listTitle;?></h2>
+	<hr>
+	<?//echo $this->widget1->render();?>
+	<?echo $this->action('viewfolder','dms_component','site',array('node'=>$this->currentNode));?>
+	<link rel="stylesheet" href="<?echo KUTU_ROOT_URL;?>/lib/jquery/pagination.css" />
+	<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jquery/jquery.pagination.js"></script>
+	<script>
+
+	$(document).ready(function(){
+
+		var isFirstTime = 1;
+
+		// First Parameter: number of items
+		// Second Parameter: options object
+		var myPageIndex = 0;
+		var itemsPerPage = <?echo $this->itemsPerPage;?>;
+		var currentOffset = <?echo $this->offset;?>;
+		var limit = <?echo $this->limit;?>;
+		var currentNode = "<?echo $this->currentNode;?>";
+		var totalItems = <?echo $this->totalItems;?>;
+		var sort = "<?echo $this->sort;?>";
+
+
+		var tmpCurrentPageIndex = currentOffset/itemsPerPage;
+
+		$("#catalogPagination").pagination(totalItems, 
+		{items_per_page:itemsPerPage, callback:handlePaginationClick, current_page:tmpCurrentPageIndex}
+		);
+
+		function handlePaginationClick(new_page_index, pagination_container) 
+		{
+			if(!isFirstTime)
+			{
+				myPageIndex = new_page_index;
+				var nextOffset = (itemsPerPage * myPageIndex);
+
+				$("#sOffset").val(nextOffset);
+				$("#frmSearch").submit();
+
+				var url = "<?echo KUTU_ROOT_URL;?>/dms/"+currentNode+"/offset/"+nextOffset+"/limit/"+limit+"/sort/"+sort+"/";
+				window.location = url;
+			}
+			isFirstTime = 0;
+			return false;
+		}
+
+
+	});
+
+	</script>
+	<h3 class="alt">Number of Catalogs: <?php echo $this->hits->response->numFound;?> Record(s)</h3>
+	<hr class="space">
+	<form id="frmCatalogs" name="frmCatalogs">
+		<div style='display:none'>
+			<form method='post' class='jcart'>
+				<fieldset style='border:0;'>
+				</fieldset>
+			</form>
+		</div>
+	<?php foreach ($this->hits->response->docs as $hit) 
+		{ 
+			$itemPrice = $this->bpm->getPrice($hit->id);
+	?>
+		<div class='span-2'><IMG src='<?php echo KUTU_ROOT_URL.'/common/images/fb/note.png' ?>' width=24 height=24 border=0 align=absmiddle /></div>
+		<div class='span-17'>
+			<p>
+				<?php if($hit->profile == 'kutu_doc'){?>
+					<a href="<?php echo KUTU_ROOT_URL;?>/browser/downloadfile/guid/<?php echo $hit->id;?>"><div class="searchResultTitle">File: <?php try {echo $hit->title;} catch (Exception $e) {echo '';}?></div></a>
+				<?php } else { ?>
+						<a href="<? echo KUTU_ROOT_URL;?>/dms/catalog/<?php echo $hit->id;?>/node/<?echo $this->currentNode;?>"><?php try {echo $hit->title;} catch (Exception $e) {echo 'No-Title';}?></a>
+				<?php }?>
+				<?php try {echo (!empty($hit->subTitle))?'<br>'.$hit->subTitle:'';} catch (Exception $e) {echo '';}?>
+				<br>
+				Last modified on: <?php try {echo @$hit->modifiedDate;} catch (Exception $e) {echo '';}?>
+				<br>
+				<strong>PRICE:</strong> USD <?php echo $itemPrice;?>
+			</p>
+		</div>
+		<div class='span-4 last'>
+			<form method='post' class='jcart' id='jcart-<?echo $hit->id;?>'>
+				<div style='display:none'>
+					<input type='hidden' name='my_item_id' value='<?echo $hit->id;?>' />
+					<input type='hidden' name='my_item_name' value='<?echo $hit->title;?>' />
+					<input type='hidden' name='my_item_price' value='<?=$itemPrice;?>' />
+					<input type='text' name='my_item_qty' value='1' size='3' />
+				</div>
+				<input type='submit' name='my_add_button' value='add to cart' class='button' />
+			</form>
+		</div>
+		<hr>
+	<?php }; ?>
+	</form>
+	<div class="span-15 last"><div id='catalogPagination' class="pagination"></div></div>
+	<br>&nbsp;
+</div>
+<div class="span-10 append-1 last">
+	<h3>My <span class="alt">Cart</span> </h3>
+	<div id="sidebar">
+		<?php $cart->display_cart($jcart);?>
+	</div>
+	<hr class="space">
+	<h3>About<span class="alt"> Legal Database</span> </h3>
+	<p>Click <a href="<?echo KUTU_ROOT_URL;?>/pages/g/lgs4a1d7b209f3df">here</a> to get more information about LGS Legal Database</p>
+	<hr class="space">
+	<h3>Most <span class="alt">Downloaded</span> </h3>
+	<p>Here is the list of the most downloaded documents</p>
+	<hr class="space">
+	<h3>Did <span class="alt">You know?</span> </h3>
+	<p>Facts just about anything...</p>
+	<hr class="space">
+	<h3>Your <span class="alt">Documents</span> </h3>
+	<p>Here is the list of the documents you have bought before.</p>
+</div>
+
+
+
+<br>
+
+
+<div class="span-15 prepend-1 colborder">
+	
+	
+</div>
+<div class="span-7 last">
+	
+	
+	
+</div>

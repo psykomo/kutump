@@ -1,0 +1,31 @@
+<br>
+<div class="container" style='background:#fff;'>
+	<div class="span-33 prepend-2 append-2" style='background:#fff;'>
+		<h2 class="alt">Search Result: <?php echo $this->hits->response->numFound;?> Record(s)</h2>
+		<hr class="space">
+	<div>
+</div>
+
+<?php foreach ($this->hits->response->docs as $hit) { ?>
+	<div class='span-2'><IMG src='<?php echo KUTU_ROOT_URL.'/common/images/fb/note.png' ?>' width=24 height=24 border=0 align=absmiddle /></div>
+	<div class='span-20 last'>
+		<p>
+			<?php if($hit->profile == 'kutu_doc'){?>
+				<a href="<?php echo KUTU_ROOT_URL;?>/browser/downloadfile/guid/<?php echo $hit->id;?>"><div class="searchResultTitle">File: <?php try {echo $hit->title;} catch (Exception $e) {echo '';}?></div></a>
+			<?php } else { ?>
+					<a href="<? echo KUTU_ROOT_URL;?>/pages/g/<?php echo $hit->id;?>"><?php try {echo $hit->title;} catch (Exception $e) {echo 'No-Title';}?></a>
+			<?php }?>
+			<?php try {echo (!empty($hit->subTitle))?'<br>'.$hit->subTitle:'';} catch (Exception $e) {echo '';}?>
+			<br>
+			Last modified on: <?php try {echo @$hit->modifiedDate;} catch (Exception $e) {echo '';}?>
+			<br>
+			<strong>PRICE:</strong> USD <?php echo $this->bpm->getPrice($hit->id);?>
+		</p>
+	</div>
+	<hr class="dashed">
+
+<?php }; ?>
+<div class="span-24 last">
+	<?php echo $this->paginationControl($this->paginator,'Sliding','paginator.phtml'); ?>
+</div>
+<br>&nbsp;

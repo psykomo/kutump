@@ -1,0 +1,124 @@
+<link rel="stylesheet" type="text/css" media="all" href="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar-mos.css" title="green">
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar_mini.js" type="text/javascript"></script>
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/lang/calendar-en.js" type="text/javascript"></script>
+<?=$this->render('header.phtml');?>
+<hr class="space">
+<form id="myForm" name="myForm">
+<fieldset class="span-20">
+<legend>Order</legend>
+<hr />
+<?foreach($this->rowset as $row) :?>
+<div class="span-4"><strong>Order ID&nbsp;</strong></div> <div class="span-5"><?=$row->orderId; ?>&nbsp;</div>
+<div class="span-4"><strong>Invoice&nbsp;</strong></div> <div class="span-5"><?=$row->invoiceNumber; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>USer ID&nbsp;</strong></div> <div class="span-5"><?=$row->userId; ?>&nbsp;</div>
+<div class="span-4"><strong>Tax Number&nbsp;</strong></div> <div class="span-5"><?=$row->taxNumber; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Tax Company&nbsp;</strong></div> <div class="span-5"><?=$row->taxCompany; ?>&nbsp;</div>
+<div class="span-4"><strong>Tax Address&nbsp;</strong></div> <div class="span-5"><?=$row->taxAddress; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>tax City&nbsp;</strong></div> <div class="span-5"> <?=$row->taxCity; ?>&nbsp;</div>
+<div class="span-4"><strong>Tax ZIP&nbsp;</strong></div> <div class="span-5"><?=$row->taxZip; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Tax Province&nbsp;</strong></div> <div class="span-5"> <?=$row->taxProvince; ?>&nbsp;</div>
+<div class="span-4"><strong>Tax Country&nbsp;</strong></div> <div class="span-5"> <?=$row->taxCountryId; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Telephone&nbsp;</strong></div> <div class="span-5"> <?=$row->telephone; ?>&nbsp;</div>
+<div class="span-4"><strong>Payment Method&nbsp;</strong></div> <div class="span-5"> <?=$row->paymentMethod; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Payment Method Note&nbsp;</strong></div> <div class="span-5"> <?=$row->paymentMethodNote; ?>&nbsp;</div>
+<div class="span-4"><strong>Last Modified&nbsp;</strong></div> <div class="span-5"> 
+<?=(!empty($row->lastModified))?strftime("%Y-%m-%d",strtotime($row->lastModified)):'undefined'; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Date Purchased&nbsp;</strong></div> <div class="span-5"> 
+<?=(!empty($row->datePurchased))?strftime("%Y-%m-%d",strtotime($row->datePurchased)):'undefined'; ?>&nbsp;</div>
+<div class="span-4"><strong>Order Status&nbsp;</strong></div> <div class="span-5"> <?=$row->ordersStatus; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Date Order Finished&nbsp;</strong></div> <div class="span-5"> <?=(!empty($row->dateOrderFinished))?strftime("%Y-%m-%d",strtotime($row->dateOrderFinished)):'undefined'; ?>&nbsp;</div>
+<div class="span-4"><strong>Currency&nbsp;</strong></div> <div class="span-5"> <?=$row->currency; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Currency Value&nbsp;</strong></div> <div class="span-5"> <?=$row->currencyValue; ?>&nbsp;</div>
+<div class="span-4"><strong>Order Total&nbsp;</strong></div> <div class="span-5"> <?=$row->orderTotal; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>Order Tax&nbsp;</strong></div> <div class="span-5"> <?=$row->orderTax ; ?>&nbsp;</div>
+<div class="span-4"><strong>Paypal IPN ID&nbsp;</strong></div> <div class="span-5"> <?=$row->paypalIpnId; ?>&nbsp;</div>
+<hr />
+<div class="span-4"><strong>IP Address&nbsp;</strong></div> <div class="span-5"> <?=$row->ipAddress; ?>&nbsp;</div>
+<div class="span-4"><strong>Payment Date&nbsp;</strong></div>
+<div class="span-4" id="paidDate" name="paidDate"><?=strftime("%Y-%m-%d",strtotime($this->Paid)); ?></div>
+<input type="hidden" name="id" value="<?=$this->id;?>">
+<?endforeach;?>
+</fieldset>
+<hr />
+<fieldset class="span-21">
+    <legend>Detail</legend>
+    <strong>
+    <div class="span-1" align="center">No</div>
+    <div class="span-3" align="center">Item ID</div>
+    <div class="span-5" align="center">Name</div>
+    <div class="span-2" align="center">Price</div>
+    <div class="span-2" align="center">Final Price</div>
+    <div class="span-2" align="center">Tax</div>
+    <div class="span-1 last" align="center">Quantity</div>
+    </strong>
+    <hr />
+<?$i =1; foreach($this->rowsetDetail as $rowDetail): ?>
+    <div class="span-1" align="center"><?=$i;?></div>
+    <div class="span-3" align="center"><?=$rowDetail['itemId']; ?></div>
+    <div class="span-5" align="left"><?=$rowDetail['documentName']; ?></div>
+    <div class="span-2" align="right"><?=number_format($rowDetail['price'],2); ?></div>
+    <div class="span-2" align="right"><?=number_format($rowDetail['finalPrice'],2); ?></div>
+    <div class="span-2" align="right"><?=number_format($rowDetail['tax'],2); ?> %</div>
+    <div class="span-1 last" align="right"><?=$rowDetail['qty']; ?></div>
+    <hr />
+<? $i++; endforeach; ?>
+</fieldset>
+<hr />
+<fieldset>
+<legend>Confirmation History</legend>
+<strong>
+<div class="span-1">No</div>
+<div class="span-2">Date</div>
+<div class="span-3">Method</div>
+<div class="span-4">Destination</div>
+<div class="span-4">Sender</div>
+<div class="span-2">Amount</div>
+<div class="span-4">Note</div>
+<div class="span-1">Extra</div>
+</strong>
+<hr>
+<?$i=1;foreach($this->rowsetConfirm as $rowConfirm) :?>
+<div class="span-1"><?=$i?></div>
+<div class="span-2"><?=$rowConfirm->paymentDate;?>&nbsp;</div>
+<div class="span-3"><?=$rowConfirm->paymentMethod;?>&nbsp;</div>
+<div class="span-4"><?=$rowConfirm->destinationAccount;?>&nbsp;</div>
+<div class="span-4">
+<?=$rowConfirm->senderAccount;?><br/>
+<?=$rowConfirm->senderAccountName;?><br/>
+<?=$rowConfirm->bankName;?><br/>
+&nbsp;</div>
+<div class="span-2" align="right"><?=number_format($rowConfirm->amount,2);?>&nbsp;</div>
+<div class="span-4"><?=$rowConfirm->note;?>&nbsp;</div>
+<?
+if($rowConfirm->confirmed == 0){
+	$col = "green";
+	$ext = "Unconfirmed";
+}else{
+	$col = "red";
+	$ext = "Rejected";
+}
+?>
+<div class="span-1"><b><font color="<?=$col?>"><?=$ext?></font></b></div>
+<hr>
+<?$i++; endforeach;?>
+</fieldset>
+<div class="span-23" align="center">
+<a class="success" href="<? echo $this->url(array('controller'=>'store', 
+            'action'=>'payconfirmyes', 'id'=>$this->idOrder));?>">
+            Accept [Confirm] </a>&nbsp;  
+<a class="error" href="<? echo $this->url(array('controller'=>'store', 
+            'action'=>'payconfirmno', 'method'=>$row->paymentMethod, 'id'=>$this->idOrder ));?>">Reject </a> &nbsp;
+<a class="notice" href="#" onClick="javascript:history.back();">Back</a>
+</div>
+</form>
+<p>&nbsp;</p>

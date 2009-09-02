@@ -1,0 +1,31 @@
+<hr class="space">
+<div class="container">
+	<div class="span-33 prepend-2 append-2 last">
+		<h2 class="alt">Newsletters Subscription</h2>
+		<hr>
+		<p> LGS has decided to work together with Google to provide its members with reliable and robust newsletters service by using Google Groups.</p>
+		<p> Google Groups is all about helping users connect with people, access information, and communicate effectively over email and on the web. 
+			Now there's a new version on the block. We didn't want to say it, but yes, it's new and improved.</p>
+		<table border=0 style="background-color: #fff; padding: 5px;" cellspacing=0>
+		  <tr><td>
+		  <img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif"
+		         height=30 width=140 alt="Google Groups">
+		  </td></tr>
+		  <tr><td style="padding-left: 5px">
+		  <b>Subscribe to lgsonline</b>
+		  </td></tr>
+		  <!--<form action="http://groups.google.com/group/lgsonline/boxsubscribe">-->
+			<form action="<?=KUTU_ROOT_URL;?>/site/myaccount_newsletter/subscribe">
+		  <input type=hidden name="hl" value="en">
+		  <tr><td style="padding-left: 5px;">
+		  Email: <input type=text name=email value="<?=$this->email;?>">
+		  <input type=submit name="sub" value="Subscribe">
+		  </td></tr>
+		</form>
+		<tr><td align=right>
+		  <a href="http://groups.google.com/group/lgsonline?hl=en">Visit this group</a>
+		</td></tr>
+		</table>
+	</div>
+</div>
+&nbsp;

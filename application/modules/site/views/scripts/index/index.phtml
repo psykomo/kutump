@@ -1,0 +1,97 @@
+<div class="container">
+	<div class="span-11">
+		<br>
+		<div class="span-11 last">
+			<?= $this->render('lgsleftmenu.phtml');?>
+		</div>
+		<br>&nbsp;
+		<p class="leftMenu" style="font-size:1.3em"><strong>CONTACT US</strong></p>
+		<p class="leftMenu">
+			Menara Imperium 30th Floor
+			<br>Jl. H. R. Rasuna Said Kav. 1 Kuningan, 
+			<br>Jakarta 12980, Indonesia. 
+			<br>Telephone : (62-21) 831 5005, 831 5025 
+			<br>Fax : (62-21) 831 5015, 831 5025
+		</p>
+		<p class="leftMenu">
+			Email:
+			<strong>
+				<br>lubis@lgslaw.co.id
+				<br>ganie@lgslaw.co.id
+				<br>surowidjojo@lgslaw.co.id
+			</strong>
+		</p>
+	</div>
+	<div class="span-26 last" style="background: #fff;">
+		<div class="span-18" style="background: #fff;">
+			<div class="box" style="background: #fff;">
+				<h3>Message From The Board</h3>
+				<p><?=Kutu_Core_Util::splitWordsFromCatalog($this->rowMfromBoard->guid,50);?>...<a href="<?=KUTU_ROOT_URL;?>/pages/g/<?=$this->rowMfromBoard->guid;?>">>>more</a></p>
+				
+				<hr>
+				<h3>Becoming A Member</h3>
+				<p><strong>It's FREE</strong>, and start getting access to 
+					LGS Legal Database which consists of LGS database compiled for more than 25 years of corporate law practices in Indonesia of the firm pioneered and led by the three founders, Timbul Thomas Lubis, Mohamed Idwan Ganie and Arief T. Surowidjojo.</p>
+				<div class="span-4">
+					<a href="<?=KUTU_ROOT_URL;?>/identity/login"><h3>Login Now</h3></a>
+				</div>
+				<div class="span-1">
+					<h4><strong>/</strong></h4>
+				</div>
+				<div class="span-8 last">
+					<a href="<?=KUTU_ROOT_URL;?>/identity/index/signup"><h3>Sign Up</h3></a>
+				</div>
+				<hr>
+				<!-- div class="span-9">
+					<h3>Login</h3>
+					<form id="kutu_loginform" action="<?php echo KUTU_ROOT_URL;?>/identity/login" method="post">
+					<div class="span-9">
+						<div class="span-9">Username &nbsp; <input name="username" id="username" size="18" value="" class="gaia le val" type="text"></div>
+						<div class="span-9">Password &nbsp;&nbsp; <input name="password" id="password" size="18" class="gaia le val" type="password"></div>
+						<div class="span-2">&nbsp;</div>
+						<div class="span-7 last">
+							<input name="PersistentCookie" id="PersistentCookie" value="yes" type="checkbox">&nbsp;Remember Me
+						</div>
+						<div class="span-9 last">
+							<br>
+							<input class="gaia le button" name="signIn" value="   Login   " type="submit">
+							&nbsp;<a href="<?echo KUTU_ROOT_URL;?>/identity/index/forgetpassword">Forget Password</a>
+							<br>&nbsp;
+						</div>
+	
+					</div>
+					<input name="returnTo" id="returnTo" value="<? echo $this->returnTo;?>" type="hidden">
+					</form>
+				</div>
+				<div class="span-8 last">
+					<h3>Register</h3>
+				</div>
+				<hr -->
+				<h3>News & Opportunities</h3>
+				<?foreach ($this->rowsNews as $row) {?>
+					<?=Kutu_Core_Util::formatDateTimeFromMySql($row->createdDate);?>
+					<p><a href="<?echo KUTU_ROOT_URL;?>/pages/g/<?=$row->guid;?>"><span class="NewsListTitle"><?echo Kutu_Core_Util::getCatalogAttributeValue($row->guid,'fixedTitle');?></span></a></p>
+					<!--p>
+						<IMG src="<?=KUTU_ROOT_URL;?>/spacer.gif" height="14px" width="1px">
+						<?echo Kutu_Core_Util::getCatalogAttributeValue($row->guid,'fixedDescription');?>
+						<a href="<?echo KUTU_ROOT_URL;?>/pages/g/<?=$row->guid;?>">More details</a>
+					</p-->
+					<hr class="dashed">
+				<?}?>
+				
+				<h3>Blackberry Web Signals</h3>
+				<p>
+					Get the latest breaking news, laws and regulations as it happens through LGS ONLINE Web Signals News Service - only on BlackBerry smartphones. 
+					Your LGS ONLINE icon will change whenever a new story breaks, allowing you to go directly to the article - be the first to know.
+					<strong> This service will SOON be available.</strong>
+				</p>
+			</div>
+		</div>
+		<div class="span-8 last" style="background: ;">
+			<div class="boxRightSideBar" style="background: #fff;">
+				<?=$this->render('lgsolrightmenu.phtml')?>
+				
+			</div>
+		</div>
+	</div>
+</div>

@@ -1,0 +1,161 @@
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar.js" type="text/javascript"></script>
+<link rel="stylesheet" type="text/css" media="all" href="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar-mos.css" title="green">
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar_mini.js" type="text/javascript"></script>
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/lang/calendar-en.js" type="text/javascript"></script>
+<link rel="stylesheet" href="<?echo KUTU_ROOT_URL;?>/lib/jquery/pagination.css" />
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jquery/jquery.pagination.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		//$('#menu').flickrmenu();
+        $('ul.sf-menu').superfish();
+    
+    var isFirstTime = 1;
+	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 1;
+	var itemsPerPage = <?echo $this->itemsPerPage;?>;
+	var currentOffset = <?echo $this->offset;?>;
+	var limit = <?echo $this->limit;?>;
+	var currentNode = "<?echo $this->currentNode;?>";
+	var totalItems = <?echo $this->totalItems;?>;
+	var sort = "<?echo $this->sort;?>";
+	<?
+	if(!empty($this->sStatus)){
+		$test = "/Query/$this->Query/";
+	}else{
+		$test = "/0/";
+	}
+	?>
+	var tmpCurrentPageIndex = currentOffset/itemsPerPage;
+	
+	$("#catalogPagination").pagination(totalItems, 
+	{items_per_page:itemsPerPage, callback:handlePaginationClick, current_page:tmpCurrentPageIndex}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		if(!isFirstTime)
+		{
+			myPageIndex = new_page_index;
+			var nextOffset = (itemsPerPage * myPageIndex);
+		
+			$("Offset").val(nextOffset);
+			$("#frmSearch").submit();
+			
+			var url = "<?echo KUTU_ROOT_URL;?>/admin/store/order/offset/"+nextOffset+"/limit/"+limit+currentNode+"/sort/"+sort+"/sStatus/<?=$this->sStatus;?>/sUsername/<?=$this->sUsername;?>/fdate/<?=$this->fdate?>/ldate/<?=$this->ldate?>";
+			window.location = url;
+		}
+		isFirstTime = 0;
+		return false;
+	}
+
+	});
+    
+</script>
+<?=$this->render('header.phtml');?>
+<hr class="space">
+<div class="span-25 last">
+<form id="frmSearch" name="frmSearch" method="POST">
+	Status : <input id="sStatus" name="sStatus" size=10 value="<?echo $this->sStatus;?>">
+	Username : <input id="sUsername" name="sUsername" size=10 value="<?echo $this->sUsername;?>">
+	Date min : <input id="fdate" name="fdate" value="<?=$this->fdate?>">
+	<input class="button" type="reset" value="..." onclick="return showCalendar('fdate');" name="cmddprebiddate"/>
+	Date max : <input id="ldate" name="ldate" value="<?=$this->ldate;?>">
+	<input class="button" type="reset" value="..." onclick="return showCalendar('ldate');" name="cmddprebiddate"/>
+	<input type="hidden" id="limit" name="limit" value="10">
+	<input type="hidden" id="offset" name="offset" value="<?echo $this->offset;?>">
+	<input type="submit" id="btnGoSearch" name="search" value="Search">
+</form>
+</div>
+<hr class="space">
+<br />
+<div class="span-10">
+	<b>Data number <?=($this->offset+1>$this->totalItems)?$this->totalItems:$this->offset+1; ?> to <?=($this->offset+$this->limit>$this->totalItems)?$this->totalItems:$this->offset+$this->limit; ?> from <?=$this->totalItems;?> data(s)</b>
+</div>
+
+<div class="span-13 last" align="right"> 
+<a href="<? echo $this->url(array('controller'=>'store', 
+            'action'=> 'xl', 'name'=>'Order', 'where' => $this->where)); ?>">Download</a>
+<!--
+		<?for($i=0;$i<count($this->orderStatus);$i++){?>
+        [<a href="<? echo $this->url(array('controller'=>'store', 
+            'action'=>'Order', 'status'=>$this->statusId[$i]));?>">
+            <?=$this->orderStatus[$i];?></a>]
+        <?}?>
+        [<a href="<? echo $this->url(array('controller'=>'store', 
+            'action'=>'Order', 'status'=>0));?>">All</a>]
+-->
+</div>
+
+<hr />
+	<strong>
+		<div class="span-1" align="center">No</div>
+		<div class="span-2" align="center">Order ID</div>
+        <div class="span-5" align="center">Description</div>
+        <div class="span-3" align="center">Payment Method</div>
+        <div class="span-3" align="center">Purchasing Date</div>
+		<div class="span-2" align="center">Order Status</div>
+        <div class="span-2" align="center">Total Price</div>
+        <div class="span-2" align="center">Qty</div>
+        <div class="span-4 last" align="center">Action</div>
+	</strong>
+<hr />
+
+<? $i=$this->offset+1; foreach($this->rows as $row): 
+    if($row['orderStatus'] == 3 or $row['orderStatus'] == 5){
+        $anchor = 'trdetail';
+	}else{
+        $anchor = 'detailOrder';
+	}
+	
+	/*if($row['paymentMethod'] == 'bank'){
+		$pay = 'payconfirm';
+		$word = 'bank payment';
+	}elseif($row['paymentMethod'] == 'postpaid'){
+		$pay = 'payconfirm';
+		$word = 'postpaid payment';
+	}else{
+		$pay = '';
+		$word = 'No Action';
+	}*/
+	?>
+      <div class="span-1" align="right"><?=$i?></div>
+      <div class="span-2" align="right"><?=$row['orderId']?></div>
+       <div class="span-5">
+        User ID : <?=$row['userId'];?><br />
+        Invoice : <?=$row['invoiceNumber'];?><br />
+        First Name :<?=$row['firstname'];?><br />
+        Last Name : <?=$row['lastname'];?><br />
+        Company : <?=$row['company'];?><br />&nbsp;
+        </div>
+       <div class="span-3"><?=$row['paymentMethod'];?>&nbsp;</div>
+       <div class="span-3" align="center"><?=strftime("%Y-%m-%d", strtotime($row['datePurchased']));?>&nbsp;</div>
+       <div class="span-2"><?=$row['ordersStatus'];?>&nbsp;</div>
+       <div class="span-2"><?=$row['orderTotal'];?>&nbsp;</div>
+       <div class="span-2"><?=$row['countTotal'];?>&nbsp;</div>
+       <div class="span-4 last">
+		<?
+		if($row['orderStatus'] == 4){
+			echo "<a href=".$this->url(array('controller'=>'store', 
+				'action'=> 'payconfirm', 'id'=>$row['orderId'])).">Action</a>";
+		}
+		?>
+		<a href="<? echo $this->url(array('controller'=>'store', 
+            'action'=>$anchor, 'id'=>$row['orderId']));?>">detail</a>
+		<?
+		if($row['orderStatus'] !=5 && $row['orderStatus'] !=2 && $row['orderStatus'] !=3 ){
+			echo "<a href=".$this->url(array('controller'=>'store', 
+				'action'=> 'deleteOrder', 'id'=>$row['orderId'])).">Delete</a>";
+		}
+	   ?>
+            <? // =$row['orderId']?>&nbsp;
+        </div>
+<hr />
+<? $i++; endforeach;?>
+<table width='100%'>
+	<tr>
+		<td width=35%>&nbsp;</td>
+		<td align=right><div id='catalogPagination' class="pagination"></div></td>
+	</tr>
+</table>

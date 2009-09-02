@@ -1,0 +1,116 @@
+<link rel="stylesheet" href="<?echo KUTU_ROOT_URL;?>/lib/jquery/pagination.css" />
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jquery/jquery.pagination.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		//$('#menu').flickrmenu();
+        $('ul.sf-menu').superfish();
+    
+    var isFirstTime = 1;
+	
+	// First Parameter: number of items
+	// Second Parameter: options object
+	var myPageIndex = 1;
+	var itemsPerPage = <?echo $this->itemsPerPage;?>;
+	var currentOffset = <?echo $this->offset;?>;
+	var limit = <?echo $this->limit;?>;
+	var currentNode = "<?echo $this->currentNode;?>";
+	var totalItems = <?echo $this->totalItems;?>;
+	var sort = "<?echo $this->sort;?>";
+	var Query = "<?=$this->Query;?>";
+	
+	var tmpCurrentPageIndex = currentOffset/itemsPerPage;
+	
+	$("#catalogPagination").pagination(totalItems, 
+	{items_per_page:itemsPerPage, callback:handlePaginationClick, current_page:tmpCurrentPageIndex}
+	);
+	
+	function handlePaginationClick(new_page_index, pagination_container) 
+	{
+		if(!isFirstTime)
+		{
+			myPageIndex = new_page_index;
+			var nextOffset = (itemsPerPage * myPageIndex);
+		
+			$("Offset").val(nextOffset);
+			$("#frmSearch").submit();
+			
+			var url = "<?echo KUTU_ROOT_URL;?>/admin/store/postpaid/offset/"+nextOffset+"/limit/"+limit+"/sort/<?=$this->sort?>/Query/"+Query+currentNode;
+			window.location = url;
+		}
+		isFirstTime = 0;
+		return false;
+	}
+});
+    
+</script>
+<?=$this->render('header.phtml');?>
+<hr class="space">
+<div class="span-6">
+	<b>Data number <?=($this->offset+1>$this->totalItems)?$this->totalItems:$this->offset+1; ?> to <?=($this->offset+$this->limit>$this->totalItems)?$this->totalItems:$this->offset+$this->limit; ?> from <?=$this->totalItems;?> data(s)</b>
+</div>
+<div class="span-6">
+	<form method="get">
+	Bills Sort
+	<select name="sort">
+		<option value="All">All
+		<option value="exist">Exist First
+		<option value="notExist">Not Exist First
+	</select>
+	<input type="submit" value="sort">
+	</form>
+</div>
+<div class="span-4">
+<input type="button"  name="add" value="Add Postpaid User" onclick="javascript:location='<?echo KUTU_ROOT_URL;?>/admin/store/postpaidadd'">
+</div>
+<div class="span-8 last">
+<form id="frmSearch" name="frmSearch" method="GET">
+	<input id="Query" name="Query" size=30 value='<?echo $this->Query;?>'>
+	<input type="hidden" id="limit" name="limit" value="10">
+	<input type="hidden" id="offset" name="offset" value="<?echo $this->offset;?>">
+	<input type="hidden" id="relatedGuid" name="relatedGuid" value="<?echo $this->relatedGuid;?>">
+	<input type="submit" id="btnGoSearch" name="search" value="Search">
+</form>
+</div>
+<hr />
+<strong>
+<div class="span-1" align="center">No</div>
+<div class="span-4" align="center">User</div>
+<div class="span-3" align="center">Last Transaction</div>
+<div class="span-2" align="center">Limit</div>
+<div class="span-2" align="center">Outstanding Order</div>
+<div class="span-2" align="center">Limit Remain</div>
+<div class="span-2" align="center">Edit</div>
+</strong>
+<hr />
+
+<? $i = $this->offset + 1;
+foreach ($this->rowset as $row):?>
+
+	<div class="span-1" align="right"><?=$i;?></div>
+	<div class="span-4">
+	<a href="<?=KUTU_ROOT_URL?>/admin/user/edit/guid/<?=$row->guid;?>"><?=$row->username;?></a><br/>
+	<?=$row->firstname?> <?=$row->lastname;?><br />
+	<?=$row->company;?>
+	&nbsp; </div>
+	<?
+	$last = $this->lastTransaction;
+	if($last[$row->guid] == '' ){
+		$lastDate = '<strong><font color="#FFD324">no record</font></strong>';
+	}else{
+		$lastDate = strftime("%Y-%m-%d",strtotime($last[$row->guid]));
+	}
+	?>
+	<div class="span-3" align="center"><?=$lastDate ;?>&nbsp;</div>
+	<div class="span-2" align="right"><?=($row->creditLimit==0)?'Unlimited':($row->creditLimit);?>&nbsp;</div>
+	<div class="span-2" align="right"><?=(!empty($row->total))?$row->total:0;?>&nbsp;</div>
+	<div class="span-2" align="right"><?=($row->creditLimit==0)?'Unlimited':number_format(($row->creditLimit-$row->total),2);?>&nbsp;</div>
+	<div class="span-2" align="center"><a href="<? echo $this->url(array('controller'=>'store', 
+				'action'=>'ppedit','id'=>$row->guid));?>">Edit</a></div>
+	<hr class="space">
+<? $i++; endforeach; ?>
+<table width='100%'>
+	<tr>
+		<td width=35%>&nbsp;</td>
+		<td align=right><div id='catalogPagination' class="pagination"></div></td>
+	</tr>
+</table>

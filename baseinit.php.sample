@@ -1,0 +1,48 @@
+<?php
+// define these global path constants here
+define( 'KUTU_ROOT_DIR', dirname(__FILE__));
+define( 'ROOT_PATH' , dirname( __FILE__ ) )  ;
+define( 'LIB_PATH' , ROOT_PATH . '/lib' ) ;
+define( 'APPLICATION_PATH' , ROOT_PATH . '/application' ) ;
+define( 'MODULE_PATH' , ROOT_PATH . '/application/modules' ) ;
+
+// define the path for configuration file
+define( 'CONFIG_PATH' , ROOT_PATH . '/application/configs' ) ;
+ 
+// Define application environment
+defined('APPLICATION_ENV')
+    || define('APPLICATION_ENV',
+    (getenv('APPLICATION_ENV') ? getenv('APPLICATION_ENV')
+    : 'development'));
+ 
+// set the php include path
+set_include_path(
+    LIB_PATH . PATH_SEPARATOR .
+    get_include_path()
+);
+
+require_once('Kutu/Core/Util.php');
+$KUTUUTIL = new Kutu_Core_Util();
+
+//should be CHANGE when deployed to production or other server
+define('KUTU_ROOT_URL', $KUTUUTIL->getRootUrl()."/kutump-enhanced");
+
+define( 'KUTU_MODULE_RESOURCES_URL' , KUTU_ROOT_URL.'/common/modules' ) ;
+
+/** Zend_Application */
+define( 'ZEND_APP_REG_ID', 'application');
+define('APPLICATION_CONFIG_FILENAME', 'application.ini');
+require_once 'Zend/Application.php';
+
+// Create application, bootstrap, and run
+$application = new Zend_Application(
+    APPLICATION_ENV,
+    CONFIG_PATH . '/'.APPLICATION_CONFIG_FILENAME
+);
+
+$registry = Zend_Registry::getInstance();
+$registry->set(ZEND_APP_REG_ID, $application);
+
+define('JCART_PATH_URL',KUTU_ROOT_URL."/lib/jcart/");
+define('JCART_FORMACTION_URL',KUTU_ROOT_URL."/site/store/checkout");
+?>

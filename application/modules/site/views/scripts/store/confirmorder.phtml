@@ -1,0 +1,152 @@
+<?
+	// INITIALIZE JCART AFTER SESSION START
+	$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
+	// INCLUDE CONFIG SO THIS SCRIPT HAS ACCESS USER FIELD NAMES
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-config.php');
+	// INCLUDE DEFAULT VALUES SINCE WE NEED TO PASS THE VALUE OF THE UPDATE BUTTON BACK TO jcart.php IF UPDATING AN ITEM QTY
+	// IF NO VALUE IS SET IN CONFIG, THERE HAS TO BE A DEFAULT VALUE SINCE SIMPLY CHECKING FOR THE VAR ITSELF FAILS
+	include(KUTU_ROOT_DIR.'/lib/jcart/jcart-defaults.php');
+?>
+<script type="text/javascript" src="<?echo KUTU_ROOT_URL;?>/lib/jcart/jcart-javascript.php"></script>
+<hr class="white">
+<div class="span-35 prepend-1 append-1 last">
+	<h2 class="alt">Confirm Your Order</h2>
+	<hr>
+	<h3>Please verify your purchased items, total charges and complete the order.</h3>
+</div>
+<div class="span-35 prepend-1 append-1 last">
+	<hr>
+	<div class="span-19">
+		<h4>Product Name</h4>
+	</div>
+	<div class="span-6">
+		<h4>Price</h4>
+	</div>
+	<div class="span-5">
+		<h4>Quantity</h4>
+	</div>
+	<div class="span-5 last">
+		<h4>Total</h4>
+	</div>
+</div>
+
+<div class="span-35 prepend-1 append-1 last">
+	<hr>
+	<?
+		$bpmCatalog = new Kutu_Core_Bpm_Catalog();
+		
+		//var_dump($this->cart);
+		
+		$jcartId = $this->cart['items'];
+		//$jcartProductInfo = $this->cart['iteminfo'];
+
+		$iCart = 0;
+		$cartTotal = 0;
+		$price = 0;
+		for($iCart=0;$iCart<count($jcartId);$iCart++)
+		{
+			$price = $bpmCatalog->getPrice($jcartId[$iCart]['itemId']);
+			$cartTotal += $price;
+	?>
+			<div class="span-18 append-1">
+				<strong><?echo $jcartId[$iCart]['item_name'];?></strong>
+				<br>
+				<?echo Kutu_Core_Util::getCatalogAttributeValue($jcartId[$iCart]['itemId'],'fixedSubTitle');	?>
+				<br>&nbsp;
+			</div>
+			<div class="span-6">
+				USD <?echo number_format($price,2);?>
+			</div>
+			<div class="span-5">
+				1
+			</div>
+			<div class="span-5 last">
+				USD <?echo number_format($price,2);?>
+			</div>
+			<hr>
+	<?	}?>
+</div>
+
+<div class="span-35 prepend-1 append-1 last">
+	<div class="span-5 prepend-25">
+		<h4>Sub Total</h4>
+	</div>
+	<div class="span-5 last">
+		<h4>USD <?echo number_format($cartTotal,2);?></h4>
+	</div>
+	<hr>
+</div>
+<div class="span-35 prepend-1 append-1 last">
+	<div class="span-5 prepend-25">
+		<h4>Tax 10%</h4>
+	</div>
+	<div class="span-5 last">
+		<h4>USD <?echo number_format($this->cart['taxAmount'],2);?></h4>
+	</div>
+	<hr>
+</div>
+<div class="span-35 prepend-1 append-1 last">
+	<div class="span-5 prepend-25">
+		<h4>Grand Total</h4>
+	</div>
+	<div class="span-5 last">
+		<h4>USD <?echo number_format($this->cart['grandTotal'],2);?></h4>
+	</div>
+	<hr>
+</div>
+
+
+
+<div class="span-35 prepend-1 append-1 last">
+	<h3>BILLING INFORMATION</h3>
+	<div class="span-15 append-3">
+		<strong>Tax Number</strong>
+		<br>
+		<?=($this->data['taxNumber'])?$this->data['taxNumber']:'-';?>
+		<br>
+		<strong>Company Name</strong>
+		<br>
+		<?=($this->data['taxCompany'])?$this->data['taxCompany']:'-';?>
+		<br>
+		<strong>Address</strong>
+		<br>
+		<?=($this->data['taxAddress'])?$this->data['taxAddress']:'-';?>
+	</div>
+	<div class="span-15 last">
+		<strong>City</strong>
+		<br>
+		<?=($this->data['taxCity'])?$this->data['taxCity']:'-';?>
+		<br>
+		<strong>Zip</strong>
+		<br>
+		<?=($this->data['taxZip'])?$this->data['taxZip']:'-';?>
+		<br>
+		<strong>Province</strong>
+		<br>
+		<?=($this->data['taxProvince'])?$this->data['taxProvince']:'-';?>
+		<br>
+		<strong>Country</strong>
+		<br>
+		<?=($this->data['taxCountry'])?$this->data['taxCountry']:'-';?>
+	</div>
+</div>
+<div class="span-35 prepend-1 append-1 last">
+	<h3>PAYMENT METHOD: <?=$this->data['method'];?></h3>
+</div>
+<div class="span-35 prepend-1 append-1 last" align="center">
+	<!--<form method="post" action="<?=KUTU_ROOT_URL;?>/site/store2_payment/index/type/<?=$this->data['method'];?>">-->
+	<form method="post" action="<?=KUTU_ROOT_URL;?>/site/store/completeorder">
+	<input type="hidden" name="taxNumber" value="<?=$this->data['taxNumber']; ?>">
+	<input type="hidden"  name="taxCompany" value="<?=$this->data['taxCompany']; ?>">
+	<input type="hidden"  name="taxAddress" value="<?=$this->data['taxAddress']; ?>">
+	<input type="hidden"  name="taxCity" value="<?=$this->data['taxCity']; ?>">
+	<input type="hidden"  name="taxZip" value="<?=$this->data['taxZip']; ?>">
+	<input type="hidden"  name="taxProvince" value="<?=$this->data['taxProvince']; ?>">
+	<input type="hidden"  name="taxCountry" value="<?=$this->data['taxCountry']; ?>">
+	<input type="hidden"  name="paymentMethod" value="<?=($this->data['method']=='manual')?'bank':$this->data['method']; ?>">
+	<input type="button" onclick="javascript:history.back();" value="cancel">&nbsp;&nbsp;<input type="submit" value="Complete Order">
+	</form>
+</div>
+<div class="append-top">&nbsp;</div>
+
+
