@@ -1,6 +1,7 @@
 /index.php
 /uploads
 /lib/Zend*
+/documentation/dev
 
 /view-resources
 /data
