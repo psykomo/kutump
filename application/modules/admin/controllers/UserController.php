@@ -12,11 +12,7 @@ class Admin_UserController extends Kutu_Controller_Action
 		$sReturn = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 		$sReturn = urlencode($sReturn);
 		$this->view->returnTo = $sReturn;
-		
-		$registry = Zend_Registry::getInstance(); 
-		$config = $registry->get('config');
-		
-		
+
 		$auth =  Zend_Auth::getInstance();
 		if(!$auth->hasIdentity())
 		{

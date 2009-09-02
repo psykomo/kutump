@@ -16,10 +16,6 @@ class Admin_Dms_RelationController extends Kutu_Controller_Action
 		$sReturn = urlencode($sReturn);
 		$this->view->returnTo = $sReturn;
 		
-		$registry = Zend_Registry::getInstance(); 
-		$config = $registry->get('config');
-		
-		
 		$auth =  Zend_Auth::getInstance();
 		if(!$auth->hasIdentity())
 		{

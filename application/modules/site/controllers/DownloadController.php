@@ -16,10 +16,6 @@ class Site_DownloadController extends Zend_Controller_Action
 		$sReturn = urlencode($sReturn);
 		$this->view->returnTo = $sReturn;
 		
-		$registry = Zend_Registry::getInstance(); 
-		$config = $registry->get('config');
-		
-		
 		$auth =  Zend_Auth::getInstance();
 		$this->_auth = $auth;
 		if(!$auth->hasIdentity())

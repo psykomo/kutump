@@ -5,13 +5,8 @@ class Kutu_Auth_Adapter_Factory
 	{
 	
 	}
-	public function getAdapter()
+	public function getAdapter($adapter, $params=array())
 	{
-		$registry = Zend_Registry::getInstance(); 
-		$config = $registry->get('config');
-
-		$adapter = $config->auth->adapter;
-
 		switch ($adapter)
 		{
 			/*case 'db-httptunnel':
@@ -24,7 +19,8 @@ class Kutu_Auth_Adapter_Factory
 			case 'db-direct':
 			case 'p2p':
 			default:
-				$db = Zend_Db::factory($config->auth->config->db->adapter, $config->auth->config->db->param->toArray());
+				//$db = Zend_Db::factory($adapter, $config->auth->config->db->param->toArray());
+				$db = Zend_Db::factory($adapter, $params);
 				$authAdapter = new Kutu_Auth_Adapter_DbTable($db,'KutuUser','username','password');
 				break;
 

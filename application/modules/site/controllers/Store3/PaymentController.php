@@ -34,9 +34,6 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
         $sReturn = urlencode($sReturn);
         $this->view->returnTo = $sReturn;
         
-        $registry = Zend_Registry::getInstance(); 
-        $config = $registry->get('config');        
-                
         $tblPaymentSetting = new Kutu_Core_Orm_Table_PaymentSetting();        
         $rowSet = $tblPaymentSetting->fetchAll();
         //var_dump($rowSet);

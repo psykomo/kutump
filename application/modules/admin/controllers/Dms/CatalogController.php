@@ -224,11 +224,6 @@ class Admin_Dms_CatalogController extends Kutu_Controller_Action
 		$r = $this->getRequest();
 		$guid = $r->getParam('guid');
 		
-		$registry = Zend_Registry::getInstance(); 
-		$conf = $registry->get('config');
-		
-		//die($conf->indexing->adapter->param->dir);
-		
 		$indexingEngine = Kutu_Search::manager();
 		$indexingEngine->indexCatalog($guid);
 		die();
