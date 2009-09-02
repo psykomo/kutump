@@ -1,5 +1,7 @@
+/index.php
 /uploads
 /lib/Zend*
+
 /view-resources
 /data
 /application/config/*.ini

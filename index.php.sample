@@ -1,0 +1,13 @@
+<?php
+include_once("baseinit.php");
+date_default_timezone_set('Asia/Jakarta');
+//error_reporting(E_ALL|E_STRICT);
+error_reporting(E_ALL);
+
+/*$bootstrap = $application->getBootstrap();
+$bootstrap->bootstrap();
+$bootstrap->run();*/
+
+$application->bootstrap()
+            ->run();
+?>
