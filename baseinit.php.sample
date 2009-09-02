@@ -25,7 +25,7 @@ require_once('Kutu/Core/Util.php');
 $KUTUUTIL = new Kutu_Core_Util();
 
 //should be CHANGE when deployed to production or other server
-define('KUTU_ROOT_URL', $KUTUUTIL->getRootUrl()."/kutump-enhanced");
+define('KUTU_ROOT_URL', $KUTUUTIL->getRootUrl()."/kutump");
 
 define( 'KUTU_MODULE_RESOURCES_URL' , KUTU_ROOT_URL.'/common/modules' ) ;
 
