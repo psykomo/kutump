@@ -9,3 +9,4 @@ baseinit.php
 /solr-kutump
 *.log
 .htaccess
+/app_log.txt
