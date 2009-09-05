@@ -123,7 +123,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 		
 		
 		
-		$tblOrder = new Kutu_Core_Orm_table_Order();
+		$tblOrder = new Kutu_Core_Orm_Table_Order();
 		$items = $tblOrder->getOrderDetail($orderId);
 		//var_dump($items); die();
 		
@@ -666,7 +666,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
     public function confirmAction(){
         $this->_checkAuth();
         $userId = $this->_userInfo->userId;
-        $tblOrder = new Kutu_Core_Orm_table_Order();
+        $tblOrder = new Kutu_Core_Orm_Table_Order();
         $tblSetting = new Kutu_Core_Orm_Table_PaymentSetting();
         
         $rowset = $tblOrder->getTransactionToConfirm($userId);//,$limit,$offset);

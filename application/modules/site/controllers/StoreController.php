@@ -216,7 +216,7 @@ class Site_StoreController extends Zend_Controller_Action
 	{
 		$orderId = $this->_request->getParam('orderId');
 		
-		$tblOrder = new Kutu_Core_Orm_table_Order();
+		$tblOrder = new Kutu_Core_Orm_Table_Order();
 		$items = $tblOrder->getOrderDetail($orderId);
 		
 		$this->view->orderId = $orderId;
