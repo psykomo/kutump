@@ -143,6 +143,10 @@ pluginPaths.Kutu_Application_Resource = "Kutu/Application/Resource"
 	resources.indexing.extractor.pdf = /opt/local/bin/pdftotext
 	resources.indexing.extractor.word = /opt/local/bin/antiword
 	
+; KUTU MAIL
+	resources.mail[] =
+	
+; KUTU JCART
 	;resources.jcart1.message = "global" 
 
 ; LAYOUT	 

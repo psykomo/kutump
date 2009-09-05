@@ -71,7 +71,8 @@ LGS Online
 			{
 				//echo $config->mail->auth;
 				//die();
-				$mail->send($transport);
+				$mailTransport = Kutu_Application::getResource('mail');
+				$mail->send($mailTransport);
 			}
 			catch (Zend_Exception $e)
 			{
@@ -171,7 +172,9 @@ an e-mail at support@lgsonline.com.
 		
 		try 
 		{
-			$mail->send($transport);
+			//$mail->send($transport);
+			$mailTransport = Kutu_Application::getResource('mail');
+			$mail->send($mailTransport);
 		}
 		catch (Zend_Exception $e)
 		{
