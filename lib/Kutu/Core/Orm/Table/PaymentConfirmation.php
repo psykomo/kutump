@@ -1,18 +1,18 @@
 <?php
 class Kutu_Core_Orm_Table_PaymentConfirmation extends Zend_Db_Table_Abstract 
 {
-	protected $_name = 'kutupaymentconfirmation';
+	protected $_name = 'KutuPaymentConfirmation';
 	
 	function unconfirmListCount($where){
     	$db = $this->_db->query("Select count(paymentId) AS count 
                                 FROM 
-									kutupaymentconfirmation AS KPC, 
-									kutuOrder AS KO, 
+									KutuPaymentConfirmation AS KPC, 
+									KutuOrder AS KO, 
 									KutuUser AS KU
 								WHERE 
-									KO.orderid = KPC.orderid 
+									KO.orderId = KPC.orderId 
 								AND 
-									KU.guid = KO.userid
+									KU.guid = KO.userId
 								AND 
 									confirmed = 0
 								$where");
@@ -24,14 +24,14 @@ class Kutu_Core_Orm_Table_PaymentConfirmation extends Zend_Db_Table_Abstract
         $db = $this->_db->query("SELECT 
 									KPC.*,KO.*, KU.*, KOS.ordersStatus 
 								FROM 
-									kutupaymentconfirmation AS KPC, 
-									kutuOrder AS KO, 
+									KutuPaymentConfirmation AS KPC, 
+									KutuOrder AS KO, 
 									KutuUser AS KU,
-									kutuOrderStatus AS KOS
+									KutuOrderStatus AS KOS
 								WHERE 
-									KO.orderid = KPC.orderid 
+									KO.orderId = KPC.orderId 
 								AND 
-									KU.guid = KO.userid
+									KU.guid = KO.userId
 								AND 
 									confirmed = 0
 								AND

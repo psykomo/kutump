@@ -6,9 +6,9 @@ class Kutu_Core_Orm_Table_OrderDetail extends Zend_Db_Table_Abstract
 	public function hasAccess($itemId, $userId)
 	{
 		$access=false;
-		$db = $this->_db->query("SELECT itemid 
+		$db = $this->_db->query("SELECT itemId 
                                 FROM
-									kutuorderdetail 
+									KutuOrderDetail 
                                 WHERE 
 									userId = '$userId'
 								AND
