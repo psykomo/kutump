@@ -11,10 +11,10 @@
 			?>
 					<h3><?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedTitle')?></h3>
 					<h3><?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedSubTitle')?></h3>
-					<h4 class="alt"><?echo $this->row->modifiedDate?></h4>
 					<?echo Kutu_Core_Util::getCatalogAttributeValue($this->catalogGuid, 'fixedContent')?>
 					<a href="<?echo KUTU_ROOT_URL;?>/pages/g/<?echo $this->currentNode;?>/heading/0">View All Articles in <?echo $this->listTitle;?></a>
 					<br>&nbsp;
+					<h4 class="alt">[Last update: <?echo $this->row->modifiedDate?>]</h4>
 					<?
 						if($this->showHeadline)
 							echo $this->action('document','pages_component','site',array("g"=>$this->catalogGuid));
