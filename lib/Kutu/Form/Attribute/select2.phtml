@@ -1,0 +1,14 @@
+<select name="<?php echo $this->name;?>" id="<?php echo $this->name;?>">
+	<?php foreach($this->defaultValues as $val => $label) {?>
+		<option value="<?php echo $val;?>" 
+			<?php 
+				if(isset($this->value) && $this->value != '')
+				{
+					if($val == $this->value) echo 'selected';
+				}
+			?>
+			>
+			<?php echo $label;?>
+		</option>
+	<?php }?>
+</select>

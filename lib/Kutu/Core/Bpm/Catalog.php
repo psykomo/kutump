@@ -412,6 +412,19 @@ class Kutu_Core_Bpm_Catalog
 		else
 			return false;
 	}
+	public function isSellable()
+	{
+		// if status=draft then return false
+		
+		// if price <= 0 then return false
+		
+		// if ada record related document, but tidak ada dokumen fisik, then return false
+		
+		// if tidak ada record related document (blm ada dokumen/file diupload), then return false
+		
+		// if pernah dibeli user sebelumnya, then return false
+		
+	}
 
 }
 ?>

@@ -203,11 +203,23 @@ class Kutu_Form_Attribute_Renderer
 				$view->setScriptPath(dirname(__FILE__));
 				return $view->render('select.phtml');
 				
-	        break;
-	        case 9 :	        
+	        	break;
+	        
+			case 9 :	        
 	            $n = "<input type='text' class='txt' name='$this->name' value='$this->value' size='5'>";
 	            return $n;
-	        break;
+	        	break;
+	
+			case 101: //publishing status
+				require_once(CONFIG_PATH.'/master-status.php');
+				$aStatus = MasterStatus::getPublishingStatus();
+				
+				$view = new Zend_View();
+				$view->name = $this->name;
+				$view->value = $this->value;
+				$view->defaultValues = $aStatus;
+				$view->setScriptPath(dirname(__FILE__));
+				return $view->render('select2.phtml');
         }
 	}
 }

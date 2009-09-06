@@ -67,7 +67,9 @@ class Kutu_Form_Helper_CatalogInputGenerator
 		require_once(CONFIG_PATH.'/master-status.php');
 		$statusConfig = MasterStatus::getPublishingStatus();
 		
-		$aBaseAttributes['status']['form'] = $statusConfig[0]."<input type='hidden' name='status' id='status' value='0'>";
+		//$aBaseAttributes['status']['form'] = $statusConfig[0]."<input type='hidden' name='status' id='status' value='0'>";
+		$attributeRenderer = new Kutu_Form_Attribute_Renderer('status',99,101);
+		$aBaseAttributes['status']['form'] = $attributeRenderer->render();
 		
 		$aReturn = array();
 		$aReturn['baseForm'] = $aBaseAttributes;
@@ -161,7 +163,10 @@ class Kutu_Form_Helper_CatalogInputGenerator
 		require_once(CONFIG_PATH.'/master-status.php');
 		$statusConfig = MasterStatus::getPublishingStatus();
 		
-		$aBaseAttributes['status']['form'] = $statusConfig[$rowCatalog->status]."<input type='hidden' name='status' id='status' value='$rowCatalog->status'>";
+		//$aBaseAttributes['status']['form'] = $statusConfig[$rowCatalog->status]."<input type='hidden' name='status' id='status' value='$rowCatalog->status'>";
+		$attributeRenderer = new Kutu_Form_Attribute_Renderer('status',$rowCatalog->status,101);
+		$aBaseAttributes['status']['form'] = $attributeRenderer->render();
+		
 		
 		$aReturn = array();
 		$aReturn['baseForm'] = $aBaseAttributes;
