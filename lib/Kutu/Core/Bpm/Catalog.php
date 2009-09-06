@@ -425,6 +425,135 @@ class Kutu_Core_Bpm_Catalog
 		// if pernah dibeli user sebelumnya, then return false
 		
 	}
+	public function jCartIsItemSellable($catalogGuid)
+	{
+		//apakah pernah dibeli
+		$auth =  Zend_Auth::getInstance();
+		$hasBought = false;
+		
+		if($auth->hasIdentity())
+		{
+			$bpm = new Kutu_Core_Bpm_Catalog();
+			$hasBought = $bpm->isBoughtByUser($catalogGuid, $auth->getIdentity()->guid);
+		}
+		if($hasBought)
+		{
+			$aReturn['isError'] = true;
+			$aReturn['message'] = 'You have bought this Item before. Please check your account.';
+			$aReturn['code'] = 1;
+			return $aReturn;
+		}
+		
+		
+		// if status=draft then return false
+		$tblCatalog = new Kutu_Core_Orm_Table_Catalog();
+		$rowCatalog = $tblCatalog->find($catalogGuid)->current();
+		if($rowCatalog)
+		{
+			if($rowCatalog->status != 99)
+			{
+				$aReturn['isError'] = true;
+				$aReturn['message'] = 'This item is not ready to be bought yet.';
+				$aReturn['code'] = 1;
+				return $aReturn;
+			}
+			
+			// if price <= 0 then return false
+			if($rowCatalog->price <= 0)
+			{
+				$aReturn['isError'] = true;
+				$aReturn['message'] = 'This item is for FREE.';
+				$aReturn['code'] = 2;
+				return $aReturn;
+			}
+			
+			
+			$tblRelatedItem = new Kutu_Core_Orm_Table_RelatedItem();
+			$where = "relatedGuid='$catalogGuid' AND relateAs='RELATED_FILE'";
+			$rowsetRelatedItem = $tblRelatedItem->fetchAll($where);
+			if(count($rowsetRelatedItem) > 0)
+			{
+				//check if the physical FILE is available in uploads directory.
+				$flagFileFound = true;
+
+				foreach($rowsetRelatedItem as $rowRelatedItem)
+				{
+					$tblCatalog = new Kutu_Core_Orm_Table_Catalog();
+			    	$rowsetCatalogFile = $tblCatalog->find($rowRelatedItem->itemGuid);
+
+					$rowCatalogFile = $rowsetCatalogFile->current();
+		    		$rowsetCatAtt = $rowCatalogFile->findDependentRowsetCatalogAttribute();
+
+			    	$contentType = $rowsetCatAtt->findByAttributeGuid('docMimeType')->value;
+					$systemname = $rowsetCatAtt->findByAttributeGuid('docSystemName')->value;
+					$filename = $rowsetCatAtt->findByAttributeGuid('docOriginalName')->value;
+
+					if(true)
+					{
+						$parentGuid = $rowRelatedItem->relatedGuid;
+						$sDir1 = KUTU_ROOT_DIR.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'files'.DIRECTORY_SEPARATOR.$systemname;
+						$sDir2 = KUTU_ROOT_DIR.DIRECTORY_SEPARATOR.'uploads'.DIRECTORY_SEPARATOR.'files'.DIRECTORY_SEPARATOR.$parentGuid.DIRECTORY_SEPARATOR.$systemname;
+
+						if(file_exists($sDir1))
+						{
+							//$flagFileFound = true;
+						}
+						else 
+							if(file_exists($sDir2))
+							{
+								//$flagFileFound = true;
+							}
+							else 
+							{
+								$flagFileFound = false;
+							}
+					}
+				}
+				
+				if($flagFileFound)
+				{
+					$aReturn['isError'] = false;
+					$aReturn['message'] = 'This item is SELLABLE.';
+					$aReturn['code'] = 99;
+					return $aReturn;
+				}
+				else
+				{
+					$aReturn['isError'] = true;
+					$aReturn['message'] = 'We are Sorry. The document(s) you are requesting is still under review. Please check back later.';
+					$aReturn['code'] = 5;
+					return $aReturn;
+				}
+					
+			}
+			else
+			{
+				$aReturn['isError'] = true;
+				$aReturn['message'] = 'We are Sorry. The document(s) you are requesting is still being prepared. Please check back later.';
+				$aReturn['code'] = 5;
+				return $aReturn;
+			}
+			
+			
+			
+ 		}
+		else
+		{
+			$aReturn['isError'] = true;
+			$aReturn['message'] = 'Can not find your selected item(s).';
+			$aReturn['code'] = 10;
+			return $aReturn;
+		}
+
+		
+		
+		//if ada record related document, but tidak ada dokumen fisik, then return false
+		
+		// if tidak ada record related document (blm ada dokumen/file diupload), then return false
+		
+		// if pernah dibeli user sebelumnya, then return false
+		
+	}
 
 }
 ?>

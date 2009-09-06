@@ -174,7 +174,7 @@ class jCart {
 				}
 			else
 				{
-					//[CUSTOM]
+					/*//[CUSTOM]
 					// check if catalog has documents
 					$tblRelatedItem = new Kutu_Core_Orm_Table_RelatedItem();
 					$where = "relatedGuid='$sanitized_item_id' AND relateAs='RELATED_FILE'";
@@ -246,7 +246,18 @@ class jCart {
 					{
 						$error_message = '<script>alert("We are Sorry. The document(s) you are requesting is still under review. Please check back later.");</script>';
 					}
-				
+					*/
+					require_once('Kutu/Core/Bpm/Catalog.php');
+					$bpmCatalog = new Kutu_Core_Bpm_Catalog();
+					
+					$aReturn = $bpmCatalog->jCartIsItemSellable($sanitized_item_id);
+					if($aReturn['isError'])
+					{
+						$error_message = '<script>alert("'.$aReturn['message'].'");</script>';
+					}
+					else
+						$this->add_item($sanitized_item_id, $valid_item_qty, $valid_item_price, $sanitized_item_name);
+					
 				}
 			}
 

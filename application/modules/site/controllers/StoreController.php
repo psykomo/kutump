@@ -364,6 +364,21 @@ class Site_StoreController extends Zend_Controller_Action
 	}
 	private function _isStoreClosed()
 	{
+		$auth =  Zend_Auth::getInstance();
+		if(!$auth->hasIdentity())
+		{
+		}
+		else
+		{
+			$username = $auth->getIdentity()->username;
+			
+			$acl = Kutu_Acl::manager();
+			if($acl->checkAcl("site",'all','user', $username, false,false))
+			{
+				return 0;
+			}
+		}
+		
 		return $this->_configStore['isClosed'];
 	}
 	public function cartemptyAction()
