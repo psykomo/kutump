@@ -81,6 +81,7 @@
     <div class="span-1" align="center">Qty&nbsp;</div>
     <div class="span-2" align="center">Method&nbsp;</div>
     <div class="span-3" align="center">Status&nbsp;</div>
+	<div class="span-3" align="left">Note</div>
     <div class="span-1 last" align="center">Pay&nbsp;</div>
 	</strong>
 <hr />
@@ -114,6 +115,7 @@
     <div class="span-1" align="right"><?=$value['countTotal']; ?>&nbsp;</div>
     <div class="span-2"><?=$value['paymentMethod']; ?>&nbsp;</div>
     <div class="span-3"><?=$value['ordersStatus']; ?>&nbsp;</div>
+    <div class="span-3"><?=$value['adminNotes']; ?>&nbsp;</div>
     <div class="span-1 last">
 	<?if(($value['orderStatus']==4) ){?>
 	<input type="checkbox" id="orderId" name="orderId[<?=$i?>]" disabled="disabled">

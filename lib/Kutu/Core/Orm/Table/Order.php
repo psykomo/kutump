@@ -8,7 +8,7 @@ class Kutu_Core_Orm_Table_Order extends Zend_Db_Table_Abstract
 	}
 	
 	public function getLastOrder($userId){
-		$db = $this->_db->query("Select * FROM KutuOrder WHERE userId ='".$userId
+		$db = $this->_db->query("SELECT * FROM KutuOrder WHERE userId ='".$userId
 								."' ORDER BY(orderId) DESC LIMIT 1");
     	$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
     	
@@ -25,7 +25,7 @@ class Kutu_Core_Orm_Table_Order extends Zend_Db_Table_Abstract
 	}
 	function countOrdersAdmin($where)
     {
-    	$db = $this->_db->query("Select count(orderId) AS count 
+    	$db = $this->_db->query("SELECT COUNT(orderId) AS count 
                                 FROM 
                                     KutuOrder AS KO,
                                     KutuOrderStatus AS KOS,
@@ -43,8 +43,8 @@ class Kutu_Core_Orm_Table_Order extends Zend_Db_Table_Abstract
     function countOrders($query, $userId)
     {
     	$db = $this->_db->query
-    	("Select count(KO.orderId) AS count From KutuOrder as KO, KutuOrderDetail AS KOD
-    	where KOD.orderID =KO.orderID AND KO.userId=$userId $query");
+    	("SELECT COUNT(KO.orderId) AS count From KutuOrder as KO, KutuOrderDetail AS KOD
+    	where KOD.orderId =KO.orderId AND KO.userId=$userId $query");
     	
     	$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);
     	
@@ -166,6 +166,7 @@ class Kutu_Core_Orm_Table_Order extends Zend_Db_Table_Abstract
 									KO.orderStatus = 5)
 								AND 
 									documentName LIKE '%$where%'
+								ORDER BY datePurchased DESC
                                 LIMIT $offset, $limit");
         //$db = $this->_db->query();
     	$dataFetch = $db->fetchAll(Zend_Db::FETCH_ASSOC);

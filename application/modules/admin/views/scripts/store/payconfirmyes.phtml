@@ -1,0 +1,29 @@
+<link rel="stylesheet" type="text/css" media="all" href="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar-mos.css" title="green">
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/calendar_mini.js" type="text/javascript"></script>
+<script src="<?echo KUTU_ROOT_URL;?>/lib/calendar/lang/calendar-en.js" type="text/javascript"></script>
+<?=$this->render('header.phtml');?>
+<hr class="space">
+<script>
+$().ready(function() {
+	// validate the comment form when it is submitted
+	$("#notesForm").validate({
+		rules: {
+			cadminnotes: "required"
+		},
+		messages: {
+			cadminnotes: "Please enter comment"
+		}
+	});
+};
+</script>
+<fieldset class="span-9">
+<?=$this->warn;?>
+<legend>Notes on rejection / confirmation</legend>
+<form id="notesForm" method="post" action="">
+<textarea name="adminNotes" id="cadminnotes" class="required"></textarea>
+<input type="hidden" name="orderid" value="<?=$this->idOrder; ?>" />
+<input type="submit" value="Submit note">
+<input type="reset" value="Reset note">
+<input type="button" value="Back" onClick="javascript:history.back();">
+</fieldset>
+</form>

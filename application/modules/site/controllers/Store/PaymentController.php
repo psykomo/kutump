@@ -24,9 +24,10 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
         - Load Configuration dari tabel kutupaymentSetting
         - set TestMode = True or False 
         */
-        $this->_testMode=true;
-		$this->_defaultCurrency='USD';
 		$tblPaymentSetting = new Kutu_Core_Orm_Table_PaymentSetting();
+        $this->_testMode=$tblPaymentSetting->fetchAll($tblPaymentSetting->select()->where(" settingKey= 'testMode'"));
+		$crc = $tblPaymentSetting->fetchAll($tblPaymentSetting->select()->where("settingKey= 'currency'"));
+		$this->_defaultCurrency= $crc[0]->settingValue;
 		$usdIdrEx = $tblPaymentSetting->fetchAll($tblPaymentSetting->select()->where(" settingKey= 'USDIDR'"));
 		$this->_currencyValue = $usdIdrEx[0]->settingValue;
 		$this->_helper->layout()->setLayout('layout-final-inside');
@@ -160,7 +161,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
                     $i=$iCart+1;
                     $paymentObject->addField("item_number_".$i, $items[$iCart]['itemId']); 
                     $paymentObject->addField("item_name_".$i, $items[$iCart]['documentName']); //nama barang [documentName]
-                    $paymentObject->addField("amount_".$i, $items[$iCart]['price']); //harga satuan [price]
+                    $paymentObject->addField("amount_".$i, number_format($items[$iCart]['price'],2,'.','')); //harga satuan [price]
                     $paymentObject->addField("quantity_".$i, $items[$iCart]['qty']); //jumlah barang [qty]\
                 }
                 $paymentObject->addField('tax_cart',$items[0]['orderTax']);
@@ -170,10 +171,12 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
                 $paymentObject->addField('custom',$orderId);
                 
 				$ivnum = $this->updateInvoiceMethod($orderId, 'paypal', 1, 0, 'paid with paypal method');
-				
 				//$paymentObject->dumpFields();
 				
-                $paymentObject->submitPayment();
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendInvoiceToUser($orderId,1);
+				
+				$paymentObject->submitPayment();
 				
 				//setting payment and status as pending (1), notify = 0, notes = 'paid with...'
 				break;
@@ -188,6 +191,8 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 				//setting payment and status as pending (1), notify = 0, notes = 'paid with...'
 				$this->updateInvoiceMethod($orderId, 'bank', 1, 0, 'paid with manual method');
 				
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendBankInvoiceToUser($orderId,1);
 				// HAP: i think we should send this notification when user were on page "Complete Order" and after confirmation made by user is approved;
 				//$this->Mailer($orderId, 'admin-order', 'admin');
 				//$this->Mailer($orderId, 'user-order', 'user');
@@ -269,7 +274,9 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 	
     public function successAction()
 	{
-        
+		
+        $mod = new App_Model_Store_Mailer();
+		$mod->sendPaypalCompleteNotificationToUser($_POST['custom']);
     }
     
 	public function verificationAction(){		
@@ -299,24 +306,30 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 			if ($myPaypal->ipnData['payment_status'] == 'Completed')
             {
 				
-				 $data=$myPaypal->ipnData;
+				$data=$myPaypal->ipnData;
                  //$this->Mailer($data['custom'], 'admin-paypal', 'admin');
 				 //$this->Mailer($data['custom'], 'user-paypal', 'XXX');    
 				            
-				 $this->paypalsave('SUCCESS', $data);
-				
-				$mod = new Site_Model_Store_Mailer();
-				$mod->sendReceiptToUser($data['custom'], 'paypal', 'SUCCESS PAID');
+				$this->paypalsave('SUCCESS', $data);
+				file_put_contents('paypal.txt', "SUCCESS\n\n" . $data['custom']);
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendReceiptToUser($data['custom'], 'paypal', 'SUCCESS PAID', 1);
             }
             else
             {
-				 $data=$myPaypal->ipnData;
+				$data=$myPaypal->ipnData;
+				$text = "IPNDATA\n\n";
+				foreach ($this->ipnData as $key=>$value)
+				{
+					$text .= "$key=$value, ";
+				}
                  //$this->Mailer($data['custom'], 'admin-paypal', 'admin');
 				 //$this->Mailer($data['custom'], 'user-paypal', 'admin');                 
-				 $this->paypalsave('FAILED', $data);
-				
-				$mod = new Site_Model_Store_Mailer();
-				$mod->sendReceiptToUser($data['custom'], 'paypal', 'FAILED');
+				$this->paypalsave('FAILED', $text);
+				file_put_contents('paypal.txt', "FAILURE\n\n" . $myPaypal->ipnData);
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendReceiptToUser($data['custom'], 'paypal', 'FAILED', 0);
+				$mod->sendFailedIpnToAdmin($text);
             }
         }
 		else
@@ -330,7 +343,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 			$writer = new Zend_Log_Writer_Stream(ROOT_PATH.'/app_log.txt');
 			$logger = new Zend_Log($writer);
 
-			$logger->info(var_dump($data));
+			//$logger->info(var_dump($data));
         }   
     	
 		die();
@@ -362,14 +375,15 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 		{
 			die('NO ORDER ID');
 		}
-        
+        $mod = new App_Model_Store_Mailer();
+		$mod->sendInvoiceToUser($orderId,1);
 		//setting payment and status as postpaid (5), notify = 0, notes = 'paid with...'
 		$this->updateInvoiceMethod($orderId, 'postpaid', 5, 0, 'paid with postpaid method');
 		
 		
 		//Send receipt for postpaid transaction
-		$mod = new Site_Model_Store_Mailer();
-		$mod->sendReceiptToUser($orderId, 'postpaid', 'POSTPAID RECORDED');
+		$mod = new App_Model_Store_Mailer();
+		$mod->sendReceiptToUser($orderId, 'postpaid', 'POSTPAID RECORDED', 1);
 		
 		//$this->Mailer($orderId, 'admin-order', 'admin');
 		//$this->Mailer($orderId, 'user-order', 'user');
@@ -609,7 +623,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
         $data->addressStatus  = $dataPaypal['address_status'];  
 		$data->payerId  = $dataPaypal['payer_id'];  
 		$data->addressStreet  = $dataPaypal['address_street'];  
-		$data->paymentDate  = $dt = date('Y-m-d H:i:s', strtotime($dataPaypal['payment_date']));
+		$data->paymentDate  = date('Y-m-d H:i:s', strtotime($dataPaypal['payment_date']));
 		$data->paymentStatus  = $status; 						
 		$data->addressZip  = $dataPaypal['address_zip']; 
 		$data->firstName  = $dataPaypal['first_name'];  
@@ -801,7 +815,7 @@ class Site_Store_PaymentController extends Zend_Controller_Action{
 	
 	function testmodelAction()
 	{
-		//$mod = new Site_Model_Store_Mailer();
+		//$mod = new App_Model_Store_Mailer();
 		//$mod->testEcho();
 		//$ret = Kutu_Application::getResource('jcart');
 		//var_dump($ret);

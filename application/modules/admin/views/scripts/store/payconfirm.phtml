@@ -112,12 +112,13 @@ if($rowConfirm->confirmed == 0){
 <hr>
 <?$i++; endforeach;?>
 </fieldset>
+<fieldset>
 <div class="span-23" align="center">
 <a class="success" href="<? echo $this->url(array('controller'=>'store', 
-            'action'=>'payconfirmyes', 'id'=>$this->idOrder));?>">
+            'action'=>'payconfirmyes', 'id'=>$this->idOrder));?>" onClick="notesForm.submit();">
             Accept [Confirm] </a>&nbsp;  
 <a class="error" href="<? echo $this->url(array('controller'=>'store', 
-            'action'=>'payconfirmno', 'method'=>$row->paymentMethod, 'id'=>$this->idOrder ));?>">Reject </a> &nbsp;
+            'action'=>'payconfirmno', 'method'=>$row->paymentMethod, 'id'=>$this->idOrder ));?>" onClick="notesForm.submit();">Reject </a> &nbsp;
 <a class="notice" href="#" onClick="javascript:history.back();">Back</a>
 </div>
 </form>

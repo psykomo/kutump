@@ -155,9 +155,9 @@ class App_Model_Store_Mailer
 							'STATUS' => $status);
         $mail->SendFileMail($sMailSource, $sMailEmailTo, $sMailSubject, $sMailEmailFrom, $sMailHeader, $aMailDataSet);
 	}
+/*------------------------------------------------------------------------*/	
 	
-	
-	function sendBankInvoiceToUser($orderId)
+	public function sendBankInvoiceToUser($orderId, $sendCc ='')
 	{
 		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
 		
@@ -175,6 +175,13 @@ class App_Model_Store_Mailer
 		$userEmail = $rowUser->email;
 		$userFullname = $rowUser->firstname.' '.$rowUser->lastname;
 		
+		if($sendCc == 1){
+			$mailCc = $config->mail->sender->support->email;
+			$mailCcName = $config->mail->sender->support->name;
+		}else{
+			$mailCc = '';
+			$mailCcName = '';
+		}
 		$message = 
 "Dear $userFullname,
 
@@ -210,18 +217,35 @@ Salam,
 
 LGS ONLINE
 ==============================";	
-
+		
+		$sFile = "sendBankInvoiceToUser.log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$userEmail."\n";
+		$content .= "MESSAGE : [LGS ONLINE] Receipt Invoice# " . $rowOrder->invoiceNumber . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
+		
 		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
-				$userEmail, '', "[LGS ONLINE] Invoice: ". $rowOrder->invoiceNumber, $message);
+				$userEmail, '', "[LGS ONLINE] Invoice: ". $rowOrder->invoiceNumber, $message,
+				$mailCc, $mailCcName);
 	
 	}
-	function sendInvoiceToUser($orderId)
+	
+	public function sendInvoiceToUser($orderId, $sendCc = '')
 	{
 		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
 		
 		$siteOwner = "LGS Online";
 		$siteName = $config->mail->sender->support->name;
 		$contactEmail = $config->mail->sender->support->email;
+		
+		if($sendCc == 1){
+			$mailCc = $config->mail->sender->support->email;
+			$mailCcName = $config->mail->sender->support->name;
+		}else{
+			$mailCc = '';
+			$mailCcName = '';
+		}
 		
 		$tblOrder = new Kutu_Core_Orm_Table_Order();
 		$rowOrder = $tblOrder->find($orderId)->current();
@@ -251,13 +275,21 @@ Best Regards,
 LGS ONLINE
 
 ==============================";	
-
+		
+		$sFile = "sendInvoiceToUser.log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$userEmail."\n";
+		$content .= "MESSAGE : [LGS ONLINE] Receipt Invoice# " . $rowOrder->invoiceNumber . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
+		
 		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
-				$userEmail, '', "[LGS ONLINE] Invoice: ". $rowOrder->invoiceNumber, $message);
+				$userEmail, '', "[LGS ONLINE] Invoice: ". $rowOrder->invoiceNumber, $message,
+				$mailCc, $mailCcName);
 	
 	}
 	
-	public function sendReceiptToUser($orderId, $paymentMethod='', $statusText='')
+	public function sendReceiptToUser($orderId, $paymentMethod='', $statusText='', $sendCc = '')
 	{
 		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
 		
@@ -268,7 +300,13 @@ LGS ONLINE
 		$tblOrder = new Kutu_Core_Orm_Table_Order();
 		$rowOrder = $tblOrder->find($orderId)->current();
 		$userId = $rowOrder->userId;
-		
+		if($sendCc == 1){
+			$mailCc = $config->mail->sender->support->email;
+			$mailCcName = $config->mail->sender->support->name;
+		}else{
+			$mailCc = '';
+			$mailCcName = '';
+		}
 		//first check if orderId status is PAID, then send the email.
 		
 		switch ($rowOrder->orderStatus)
@@ -316,6 +354,7 @@ Total Amount: USD $rowOrder->orderTotal
 Transaction #:
 Total Paid: USD $rowOrder->orderTotal
 Status: $orderStatus
+Reason: $rowOrder->adminNotes
 Your payment method is: $paymentMethod
 
 You may review your invoice history at any time by logging in to your account ".KUTU_ROOT_URL."/site/store_payment/list
@@ -329,9 +368,16 @@ LGS ONLINE
 ==============================";
 
 		}
+		$sFile = "sendReceiptToUser-".$paymentMethod.".log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$userEmail."\n";
+		$content .= "MESSAGE : [LGS ONLINE] Receipt Invoice# " . $rowOrder->invoiceNumber . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
 		
 		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
-				$userEmail, '', "[LGS ONLINE] Receipt Invoice# ". $rowOrder->invoiceNumber, $message);
+				$userEmail, '', "[LGS ONLINE] Receipt Invoice# ". $rowOrder->invoiceNumber, $message,
+				$mailCc, $mailCcName);
 	}
 	
 	public function sendUserBankConfirmationToAdmin($orderId)
@@ -360,16 +406,80 @@ You just have received Bank Transfer Confirmation for Order ID $sOrderId please 
 KUTU_ROOT_URL."/admin/store/confirm.
 
 ==============================";
-
+		
+		$sFile = "sendUserBankConfirmationToAdmin.log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$config->mail->sender->support->email."\n";
+		$content .= "MESSAGE : [LGS ONLINE] Receipt Invoice# " . $rowOrder->invoiceNumber . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
 
 		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
 						$config->mail->sender->billing->email, $config->mail->sender->billing->name, 
-						"[LGS ONLINE] Bank Transfer Payment Confirmation ", $message);
+						"[LGS ONLINE] Bank Transfer Payment Confirmation ", $message
+						);
 		
 		
 	}
 	
-	public function send($mailFrom, $fromName, $mailTo, $mailToName, $subject, $body)
+	public function sendPaypalCompleteNotificationToUser($orderId)
+	{
+		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
+		
+		$sOrderId = '';
+		
+		$tblUser = new Kutu_Core_Orm_Table_User();
+		$tblOrder = new Kutu_Core_Orm_Table_Order();
+		$rowOrder = $tblOrder->find($orderId)->current();
+		$userId = $rowOrder->userId;
+		$rowUser = $tblUser->find($userId)->current();
+		$userEmail = $rowUser->email;
+		$userFullname = $rowUser->firstname.' '.$rowUser->lastname;
+		
+		$message = 
+"					
+Your Paypal payment for item(s) with Order ID $sOrderId has been completely proceed.
+
+now you can continue to <a href=\"".KUTU_ROOT_URL."/site/store_payment/document\">download the document(s)</a> or just continue <a href=\"".KUTU_ROOT_URL."/dms\">browsing our database</a>..
+
+==============================";
+		
+		$sFile = "sendPaypalCompleteNotificationToUser.log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$userEmail;
+		$content .= "MESSAGE : [LGS ONLINE] Receipt Invoice# " . $rowOrder->invoiceNumber . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
+		
+		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
+						$userEmail, '', "[LGS ONLINE] Paypal Payment Complete ", $message);
+		
+		
+	}
+	
+	public function sendFailedIpnToAdmin($data)
+	{
+		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
+		
+		$sOrderId = '';
+		
+		$message = $data;
+		
+		$sFile = "sendFailedIpnToAdmin.log";
+		$content = "SENDER : ".$config->mail->sender->support->email."\n";
+		$content .= "NAME : ".$config->mail->sender->support->name."\n";
+		$content .= "RECIPIENT : ".$config->mail->sender->support->email."\n";
+		$content .= "MESSAGE : [LGS ONLINE] FAILED IPN " . $message ."\n"; 
+		$this->logThisMail($sFile,$content);
+
+		$this->send($config->mail->sender->support->email, $config->mail->sender->support->name, 
+						$config->mail->sender->support->email, '', "MESSAGE : [LGS ONLINE] FAILED IPN ", $message
+						,'','');
+		
+		
+	}
+	
+	public function send($mailFrom, $fromName, $mailTo, $mailToName, $subject, $body, $mailCc='', $mailCcName='')
 	{
 		$config = new Zend_Config_Ini(KUTU_ROOT_DIR.'/application/configs/mail.ini', 'general');
 		$options = array('auth' => $config->mail->auth,
@@ -391,6 +501,9 @@ KUTU_ROOT_URL."/admin/store/confirm.
 		$mail->setBodyText($body);
 		$mail->setFrom($mailFrom, $fromName);
 		$mail->addTo($mailTo, $mailToName);
+		if($mailCc != ''){
+			$mail->addCc($mailCc, $mailCcName);
+		}
 		$mail->setSubject($subject);
 		
 		try 
@@ -405,7 +518,20 @@ KUTU_ROOT_URL."/admin/store/confirm.
 			echo $e->getMessage();
 		}
 	}
+	public function logThisMail($sFile, $sFileContent)
+    {
+		//if (!$this->logIpn) return;
+		$sFileName = 'LogMAIL-'.$sFile;
+        // Timestamp
+        $text = '[' . date('m/d/Y g:i A').'] - ';
 
+        $text .= $sFileContent;
+		$text .= "==============================================================\n\n";
+        // Write to log
+        $fp = fopen($sFileName,'a');
+        fwrite($fp, $text . "\n\n");
+        fclose($fp);
+    }
 	public function testEcho()
 	{
 		echo 'test model';

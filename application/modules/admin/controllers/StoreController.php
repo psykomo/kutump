@@ -712,40 +712,52 @@ class Admin_StoreController extends Kutu_Controller_Action
 		echo '</pre>';
 	}
 	public function payconfirmyesAction(){
-		print_r($this->_request->getParams());
+		//var_dump($this->_request->getParams());
 		$id = $this->_request->getParam('id');
-		$tblOrder = new Kutu_Core_Orm_Table_Order;
-		$tblHistory = new Kutu_Core_Orm_Table_OrderHistory;
-        $tblConfirm = new Kutu_Core_Orm_Table_PaymentConfirmation;
 		
-		//select payment date from paymentconfirmation
-		$date = $tblConfirm->fetchAll($tblConfirm->select()->where("orderId = ". $id." AND confirmed = 0"));
-		$data['paidDate'] = @$date[0]->paymentDate;
-		//update order
-		$data['orderStatus'] = 3;
-		$tblOrder->update($data,"orderId = ". $id);
-		
-		//update paymentconfirmation
-		$dataConfirm['confirmed'] =1;
-		$tblConfirm->update($dataConfirm, "orderId = ". $id);
-		
-		//add history
-		$dataHistory = $tblHistory->fetchNew();
-		//history data
-		$dataHistory['orderId'] = $id; 
-		$dataHistory['orderStatusId'] = 3; 
-		$dataHistory['dateCreated'] = date('Y-m-d'); 
-		$dataHistory['userNotified']   = 1; 
-		$dataHistory['note'] = 'confirmed'; 
-		$dataHistory->save();
-		
-		//mailer 
-		//$this->Mailer($id, 'user-confirm', 'user');
-		$mod = new App_Model_Store_Mailer();
-		$mod->sendReceiptToUser($id,'Bank Transfer');
-		
-		//redirect to confirmation page
-		$this->_helper->redirector('confirm');
+		$this->view->idOrder = $id;
+		$this->view->warn = '';
+		if($this->_request->isPost('adminNotes') == true){
+			if(strlen($this->_request->getParam('adminNotes')) == 0){
+				$this->view->warn = '<div class="error"> Please insert some notes</div>';
+			}else{
+				//var_dump($this->_request->getParams());
+				$id = $this->_request->getParam('id');
+				$tblOrder = new Kutu_Core_Orm_Table_Order;
+				$tblHistory = new Kutu_Core_Orm_Table_OrderHistory;
+				$tblConfirm = new Kutu_Core_Orm_Table_PaymentConfirmation;
+				//select payment date from paymentconfirmation
+				$date = $tblConfirm->fetchAll($tblConfirm->select()->where("orderId = ". $id." AND confirmed = 0"));
+				$data['paidDate'] = @$date[0]->paymentDate;
+				//update order
+				$data['orderStatus'] = 3;
+				$data['adminNotes'] = $this->_request->getParam('adminNotes');
+				$tblOrder->update($data,"orderId = ". $id);
+				
+				//update paymentconfirmation
+				$dataConfirm['confirmed'] =1;
+				$dataConfirm['adminNotes'] = $this->_request->getParam('adminNotes');
+				$tblConfirm->update($dataConfirm, "orderId = ". $id);
+				
+				//add history
+				$dataHistory = $tblHistory->fetchNew();
+				//history data
+				$dataHistory['orderId'] = $id; 
+				$dataHistory['orderStatusId'] = 3; 
+				$dataHistory['dateCreated'] = date('Y-m-d'); 
+				$dataHistory['userNotified']   = 1; 
+				$dataHistory['note'] = 'confirmed'; 
+				$dataHistory->save();
+				
+				//mailer 
+				//$this->Mailer($id, 'user-confirm', 'user');
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendReceiptToUser($id,'Bank Transfer','ACCEPTED',1);
+				
+				//redirect to confirmation page
+				$this->_helper->redirector('confirm');
+			}
+		}		
 	}
 	public function payconfirmnoAction(){
 		//print_r($this->_request->getParams());
@@ -756,38 +768,49 @@ class Admin_StoreController extends Kutu_Controller_Action
 		}else{
 			$method = 5;
 		}*/
-		$method = 6;
-		$tblOrder = new Kutu_Core_Orm_Table_Order;
-		$tblHistory = new Kutu_Core_Orm_Table_OrderHistory;
-        $tblConfirm = new Kutu_Core_Orm_Table_PaymentConfirmation;
-		//echo $method;
-				//select payment date from paymentconfirmation
-		$date = $tblConfirm->fetchAll($tblConfirm->select()->where("orderId = ". $id." AND confirmed = 0"));
-		//$data['paidDate'] = @$date[0]->paymentDate;
-		//update order
-		$data['orderStatus'] = $method;
-		$tblOrder->update($data,"orderId = ". $id);
-		
-		//update paymentconfirmation
-		$dataConfirm['confirmed'] =1;
-		$tblConfirm->update($dataConfirm, "orderId = ". $id);
-		
-		//add history
-		$dataHistory = $tblHistory->fetchNew();
-		//history data
-		$dataHistory['orderId'] = $id; 
-		
-		$dataHistory['orderStatusId'] = $method; 
-		$dataHistory['dateCreated'] = date('Y-m-d'); 
-		$dataHistory['userNotified']   = 1; 
-		$dataHistory['note'] = 'rejected'; 
-		$dataHistory->save();
-		
-		$mod = new App_Model_Store_Mailer();
-		$mod->sendReceiptToUser($id,'Bank Transfer', "REJECTED");
-		
-		//redirect to confirmation page
-		$this->_helper->redirector('confirm');
+		$this->view->idOrder = $id;
+		$this->view->warn = '';
+		if($this->_request->isPost('adminNotes') == true){
+			if(strlen($this->_request->getParam('adminNotes')) == 0){
+				$this->view->warn = '<div class="error"> Please insert some notes</div>';
+			}else{
+				$id = $this->_request->getParam('id');
+				$method = 6;
+				$tblOrder = new Kutu_Core_Orm_Table_Order;
+				$tblHistory = new Kutu_Core_Orm_Table_OrderHistory;
+				$tblConfirm = new Kutu_Core_Orm_Table_PaymentConfirmation;
+				//echo $method;
+						//select payment date from paymentconfirmation
+				$date = $tblConfirm->fetchAll($tblConfirm->select()->where("orderId = ". $id." AND confirmed = 0"));
+				//$data['paidDate'] = @$date[0]->paymentDate;
+				//update order
+				$data['orderStatus'] = $method;
+				$data['adminNotes'] = $this->_request->getParam('adminNotes');
+				$tblOrder->update($data,"orderId = ". $id);
+				
+				//update paymentconfirmation
+				$dataConfirm['confirmed'] =1;
+				$dataConfirm['adminNotes'] = $this->_request->getParam('adminNotes');
+				$tblConfirm->update($dataConfirm, "orderId = ". $id);
+				
+				//add history
+				$dataHistory = $tblHistory->fetchNew();
+				//history data
+				$dataHistory['orderId'] = $id; 
+				
+				$dataHistory['orderStatusId'] = $method; 
+				$dataHistory['dateCreated'] = date('Y-m-d'); 
+				$dataHistory['userNotified']   = 1; 
+				$dataHistory['note'] = 'rejected'; 
+				$dataHistory->save();
+				
+				$mod = new App_Model_Store_Mailer();
+				$mod->sendReceiptToUser($id,'Bank Transfer', "REJECTED", 1);
+				
+				//redirect to confirmation page
+				$this->_helper->redirector('confirm');
+			}
+		}
 	}
 	public function postpaidaddAction(){
 		$act = $this->_request->get('act');

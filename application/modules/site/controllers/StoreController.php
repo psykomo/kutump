@@ -65,9 +65,10 @@ class Site_StoreController extends Zend_Controller_Action
 		$userFinanceInfo = $tblUserFinance->find($userId)->current();
 		
 		//print_r($_POST);
+
 		$cart =& $_SESSION['jCart']; if(!is_object($cart)) $cart = new jCart();
 		$this->view->cart = $cart;
-		//print_r($this->_userInfo);
+		//print_r($_SESSION['jCart']);
 		$this->view->userInfo = $userFinanceInfo;
 		
 		//if($this->_configStore->store->isClosed)
